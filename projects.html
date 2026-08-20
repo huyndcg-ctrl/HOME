@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dự án — S.Sens Homes</title>
+  <meta name="description" content="A look at the S.Sens Homes design projects across Vietnam." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div data-header="projects.html"></div>
+
+  <section class="page-hero" style="--img:url('../assets/img/1512917774080-9991f1c4c750.jpg')">
+    <div class="wrap">
+      <div class="crumb">Trang chủ · Dự án</div>
+      <h1>Dự án thiết kế, từ từng căn phòng.</h1>
+      <p>Each S.Sens home is a project in itself — from bare walls to a finished space we're proud to hand you the keys to.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <div class="eyebrow">Dự án nổi bật</div>
+        <h2>Nơi thiết kế gặp gỡ trải nghiệm lưu trú</h2>
+        <p>A selection of the spaces our team has designed, built and now hosts across the country.</p>
+      </div>
+      <div class="grid" id="projects-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--cream-2)">
+    <div class="wrap">
+      <div class="split">
+        <div class="reveal">
+          <div class="eyebrow">Quy trình của chúng tôi</div>
+          <h2>Từ ý tưởng đến chìa khóa.</h2>
+          <p>Every project follows the same careful path — so what you experience on arrival is exactly what we set out to create.</p>
+          <div class="value-list">
+            <div class="value-item"><div class="vi-icon">1</div><div><h4 id="project-step-1-title">Discover the space</h4><p id="project-step-1-text">We find homes with character and potential in the places you want to be.</p></div></div>
+            <div class="value-item"><div class="vi-icon">2</div><div><h4 id="project-step-2-title">Design & build</h4><p id="project-step-2-text">Our in-house team designs the interiors and manages every detail of the build.</p></div></div>
+            <div class="value-item"><div class="vi-icon">3</div><div><h4 id="project-step-3-title">Host with care</h4><p id="project-step-3-text">Local teams operate each home to hotel standards, all year round.</p></div></div>
+          </div>
+        </div>
+        <div class="split-media reveal">
+          <img src="assets/img/1615529182904-14819c35db37.jpg" alt="Design process" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <div class="eyebrow" style="color:#e7c99b" id="projects-cta-eyebrow">Đồng hành cùng chúng tôi</div>
+        <h2>Bạn có một không gian phù hợp?</h2>
+        <p>Whether you own a property or simply want to stay in one, we'd love to hear from you.</p>
+        <a href="contact.html" class="btn btn-tan">Liên hệ ngay</a>
+      </div>
+    </div>
+  </section>
+
+  <div data-footer></div>
+  <script src="js/data.js"></script>
+  <script src="js/booking-engine.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Render featured projects from the same dataset
+    document.addEventListener("DOMContentLoaded", function () {
+      var grid = document.getElementById("projects-grid");
+      var feat = (window.SSENS_PROPERTIES || []).filter(function (p) { return p.featured; });
+      grid.innerHTML = feat.map(function (p) {
+        return '<article class="card in"><div class="card-media"><div class="card-loc">' + p.location + '</div>' +
+          '<a href="property.html?id=' + p.id + '"><img src="' + p.images[0] + '" alt="' + p.name + '" loading="lazy" /></a></div>' +
+          '<div class="card-body"><h3><a href="property.html?id=' + p.id + '">' + p.name + '</a></h3><p class="card-desc">' + p.description + '</p>' +
+          '<div class="card-foot" style="margin-top:16px"><div class="card-price"><b>$' + p.priceMin + '–$' + p.priceMax + '</b> <span>/ đêm</span></div>' +
+          '<a href="property.html?id=' + p.id + '" class="btn btn-primary">Xem chi tiết</a></div></div></article>';
+      }).join("");
+    });
+  </script>
+</body>
+</html>

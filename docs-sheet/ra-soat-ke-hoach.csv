@@ -1,0 +1,30 @@
+RÀ SOÁT KẾ HOẠCH (BẢN CẬP NHẬT THEO YÊU CẦU)
+"Chữ ĐỎ = cắt/để sau · Chữ XANH = giữ. Xem cột ""Đề xuất"" ở mỗi sheet."
+
+► MÔ HÌNH ĐÃ CHỌN:
+"Giao diện/trải nghiệm kiểu S.Sens Homes NHƯNG CÓ đặt phòng online thật (lịch real-time, tính giá, thanh toán, tài khoản khách). → Đây KHÔNG còn là bản showcase 2–4 tuần, mà là một WEBSITE ĐẶT PHÒNG thực thụ."
+
+► KẾT QUẢ 45 TÍNH NĂNG:  GIỮ 15 · RÚT GỌN 7 · BỎ 22 · ĐỂ SAU 1
+
+► GIỮ (front-end đẹp kiểu S.Sens + lõi đặt phòng):
+"   ✔ Trang chủ + gallery ảnh, danh sách + lọc theo thành phố, trang chi tiết"
+   ✔ Lịch trống real-time + chống double-booking
+"   ✔ Tính giá minh bạch, long-stay discount, mã giảm giá/voucher"
+   ✔ Instant Book / Request to Book
+   ✔ Thanh toán online (VNPay/MoMo/ZaloPay/Stripe) + đặt cọc/thanh toán toàn bộ
+   ✔ Tài khoản khách (email/OTP/Google) + quản lý booking + wishlist
+"   ✔ FAQ, testimonial, Instagram, nút WhatsApp/Zalo"
+   ✔ Admin quản lý booking/lịch/giá + CMS nội dung
+
+► VẪN BỎ / ĐỂ SAU (chưa cần cho bản đầu):
+"   ✘ Marketplace đa chủ nhà: KYC chủ nhà, tự đăng listing, duyệt, payout, hoa hồng (GĐ2/GĐ3)"
+"   ✘ Chat real-time khách ↔ chủ nhà, đánh giá 2 chiều"
+   ✘ Thông báo SMS/push (giữ email + SMS-OTP)
+"   ✘ Tìm kiếm nâng cao + map search, Meilisearch/Elasticsearch"
+   ✘ Admin RBAC lớn + tài chính nền tảng nhiều chủ nhà
+   ✘ Đa ngôn ngữ VN/EN + đa tiền tệ (để sau)
+"   ✘ Gợi ý khu vực nổi bật, sắp xếp phức tạp"
+
+► TÁC ĐỘNG (đọc kỹ):
+"Vì giữ đặt phòng + thanh toán + tài khoản, các hạng mục sau BẮT BUỘC quay lại (đã cập nhật màu xanh trong file): Backend thật, PostgreSQL, Redis (chống trùng lịch), cổng thanh toán, Auth + SMS-OTP, Admin quản lý booking; và về pháp lý: hóa đơn điện tử + thuế đầy đủ + chính sách hủy/hoàn tiền."
+⏱ Thời lượng: GĐ1 KHÔNG rút xuống 2–3 tuần được nữa — quay lại ~6–10 tuần (1 dev full-time). Đây là đánh đổi hợp lý nếu bạn muốn TỰ nhận đặt phòng & né hoa hồng OTA thay vì đẩy khách sang Airbnb/Agoda.

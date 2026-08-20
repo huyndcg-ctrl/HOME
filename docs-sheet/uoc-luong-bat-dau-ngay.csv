@@ -1,0 +1,22 @@
+ƯỚC LƯỢNG KHỐI LƯỢNG & VIỆC BẮT ĐẦU NGAY,,,,
+"Thời gian tương đối, giả định 1 dev full-time có kinh nghiệm; đội đông hơn thì rút ngắn.",,,,
+,,,,
+Giai đoạn,Ưu tiên,Độ khó,Thời lượng tương đối,Đề xuất (bản như S.Sens)
+GĐ0 – Chuẩn bị,P0,Thấp–Trung bình,1–2 tuần,GIỮ — Nhẹ hơn: ~1 tuần.
+GĐ1 – MVP tự đăng,P0,Cao,6–10 tuần,GIỮ — Có đặt phòng + thanh toán nên quy mô đầy đủ: ~6–10 tuần (không rút xuống 2–3 tuần được).
+GĐ2 – Trải nghiệm khách,P1,Trung bình,4–6 tuần,ĐỂ SAU — Không cần cho bản như S.Sens.
+GĐ3 – Marketplace,P1,Cao,6–10 tuần,BỎ — Ngoài phạm vi.
+GĐ4 – Tối ưu,P2,Trung bình (liên tục),Liên tục,ĐỂ SAU — Giữ lại phần SEO khi có thời gian.
+,,,,
+Bắt đầu ngay tuần này — 5 việc đầu tiên,,,,
+"1. Chốt danh sách tính năng P0 cho MVP (dựa sheet Tính năng, gạch bớt cái chưa cần).",,,,
+2. Vẽ nhanh wireframe 5 màn hình chính (phác tay hoặc Figma).,,,,
+3. Thiết kế mô hình dữ liệu cho listing – lịch – giá – booking.,,,,
+"4. Đăng ký tài khoản VNPay/MoMo, bản đồ, hosting để có khóa API.",,,,
+"5. Quyết định tự code hay thuê dev; nếu thuê, dùng chính tài liệu này làm đề bài.",,,,
+,,,,
+Câu hỏi mở cần bạn quyết dần,,,,
+• Khu vực triển khai đầu tiên (thành phố/quận nào)?,,,,
+• Loại hình chính giai đoạn đầu: Airbnb ngắn ngày hay căn hộ dịch vụ dài ngày?,,,,
+"• Có thu đặt cọc online không, hay chỉ giữ chỗ rồi thanh toán khi nhận phòng?",,,,
+"• Ngân sách & nhân sự: tự code, thuê freelancer, hay lập đội?",,,,

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>S.Sens Homes — Quản trị</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin.css" />
+  <style>.review-editor{margin:14px 0;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--cream)}.review-editor .secondary{margin-top:2px}.check-group{border:1px solid var(--line);border-radius:10px;padding:16px;margin:16px 0}.check-group legend{padding:0 6px;font-weight:700}</style>
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <a href="index.html" class="brand"><b>S.</b><span>Sens</span><small>Homes</small></a>
+      <p class="sidebar-label">Khu vực nội bộ</p>
+      <nav>
+        <button class="nav-item active" data-view="leads">Yêu cầu mới</button>
+        <button class="nav-item" data-view="bookings">Đặt chỗ</button>
+        <button class="nav-item" data-view="homes">Căn hộ & nội dung</button>
+        <button class="nav-item" data-view="content">Nội dung website</button>
+      </nav>
+      <a class="back-link" href="index.html">← Xem website</a>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-header">
+        <div><p class="eyebrow">S.Sens Homes</p><h1 id="page-title">Đặt chỗ</h1></div>
+        <button class="refresh" id="refresh">↻ Làm mới</button>
+      </header>
+
+      <section class="login-card" id="login-card" hidden>
+        <p class="eyebrow">Khu vực bảo vệ</p>
+        <h2>Nhập mật khẩu quản trị</h2>
+        <p>Thiết lập <code>ADMIN_PASSWORD</code> trong <code>.env</code> trước khi xuất bản website.</p>
+        <form id="login-form"><input id="admin-password" type="password" autocomplete="current-password" placeholder="Mật khẩu" required /><button>Mở trang quản trị</button></form>
+        <p class="form-error" id="login-error"></p>
+      </section>
+
+      <div id="admin-content">
+        <section class="stats" id="stats"></section>
+        <section class="panel" id="leads-view">
+          <div class="panel-head"><div><h2>Trung tâm yêu cầu</h2><p>Tất cả yêu cầu từ website được tập trung ở đây. SLA: phản hồi trong 15 phút (8h–22h).</p></div><input id="lead-search" type="search" placeholder="Tìm mã, khách, số điện thoại hoặc căn hộ" /></div>
+          <div class="table-wrap"><table><thead><tr><th>Mã & thời điểm</th><th>Khách hàng</th><th>Nhu cầu</th><th>Kênh</th><th>Trạng thái</th></tr></thead><tbody id="leads-table"></tbody></table></div>
+        </section>
+        <section class="panel" id="bookings-view" hidden>
+          <div class="panel-head"><div><h2>Tất cả đặt chỗ</h2><p>Xác nhận, giữ chờ duyệt hoặc hủy một đặt chỗ.</p></div><input id="booking-search" type="search" placeholder="Tìm mã, khách hàng hoặc căn hộ" /></div>
+          <div class="table-wrap"><table><thead><tr><th>Mã tham chiếu</th><th>Khách hàng</th><th>Căn hộ & kỳ ở</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead><tbody id="bookings-table"></tbody></table></div>
+        </section>
+
+        <section class="panel" id="homes-view" hidden>
+          <div class="panel-head"><div><h2>Tổng căn hộ của bạn</h2><p>Quản lý thông tin, giá, hình ảnh và trạng thái hiển thị của từng căn hộ.</p></div></div>
+          <div class="homes-grid" id="homes-grid"></div>
+        </section>
+        <section class="panel" id="content-view" hidden>
+          <div class="panel-head"><div><h2>Nội dung website</h2><p>Cập nhật hero trang chủ, thông tin liên hệ và SEO mà không cần sửa mã.</p></div></div>
+          <form id="content-form"><div class="form-grid"><label>Hero — dòng nhãn<input id="content-hero-eyebrow" /></label><label>Hero — tiêu đề<input id="content-hero-title" /></label></div><label>Hero — mô tả<textarea id="content-hero-text" rows="3"></textarea></label><div class="form-grid"><label>Email liên hệ<input id="content-email" type="email" /></label><label>Hotline<input id="content-phone" /></label><label>Số Zalo (dạng 84...)<input id="content-zalo" /></label></div><label>Điểm đến ở footer (mỗi dòng một điểm đến)<textarea id="content-destinations" rows="5"></textarea></label><label>SEO trang chủ — tiêu đề<input id="content-seo-title" /></label><label>SEO trang chủ — mô tả<textarea id="content-seo-description" rows="3"></textarea></label><label>SEO — ảnh chia sẻ<div class="content-image-field"><input id="content-seo-image" /><button class="secondary" type="button" id="upload-seo-image">Chọn ảnh</button></div><div class="mini-drop" id="seo-image-drop">Kéo thả ảnh vào đây hoặc bấm để chọn</div></label><fieldset class="check-group"><legend>Câu hỏi thường gặp</legend><div id="faq-editor"></div><button class="secondary" type="button" id="add-faq">+ Thêm câu hỏi</button><textarea id="content-faq" hidden></textarea></fieldset><fieldset class="check-group"><legend>Đánh giá khách hàng</legend><div id="reviews-editor"></div><button class="secondary" type="button" id="add-review">+ Thêm đánh giá</button><textarea id="content-testimonials" hidden></textarea></fieldset><p class="form-error" id="content-error"></p><div class="dialog-actions"><button class="primary">Lưu nội dung website</button></div></form>
+          <fieldset class="check-group"><legend>Nội dung theo từng trang</legend><p class="muted">Chọn trang cần sửa. Nội dung hiện tại được nạp sẵn; chỉnh sửa xong, bấm lưu ở cuối.</p><div class="cms-page-tabs" id="cms-page-tabs"></div><div id="pages-editor"></div><div class="dialog-actions"><button class="primary" type="submit" form="content-form">Lưu toàn bộ nội dung website</button></div></fieldset>
+          <input id="content-image-file" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+          <input id="review-image-file" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+          <input id="seo-image-file" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="home-dialog">
+    <form id="home-form" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">Chỉnh sửa căn hộ</p><h2 id="home-dialog-title">Căn hộ</h2></div><button type="button" class="icon-button" id="close-dialog">×</button></div>
+      <input type="hidden" id="home-id" />
+      <div class="form-grid">
+        <label>Tên hiển thị với khách hàng<input id="home-name" required /></label>
+        <label>Tên nội bộ (chỉ admin thấy)<input id="home-internal-name" placeholder="VD: Zenity - căn mẫu tầng 28" /></label>
+        <label>Khu vực<select id="home-location" required><option value="Hà Nội">Hà Nội</option><option value="TP.HCM">TP. Hồ Chí Minh</option><option value="Tam Đảo">Tam Đảo</option><option value="Hồ Tràm">Hồ Tràm</option><option value="Cam Ranh">Cam Ranh</option></select></label>
+        <label>Loại hình thuê<select id="home-rental-type"><option value="short">Ngắn hạn</option><option value="long">Dài hạn</option></select></label>
+        <label id="home-price-min-wrap">Giá từ / đêm (VNĐ)<input id="home-price-min" type="text" inputmode="numeric" autocomplete="off" required /></label>
+        <label id="home-price-max-wrap">Giá tối đa / đêm (VNĐ)<input id="home-price-max" type="text" inputmode="numeric" autocomplete="off" required /></label>
+        <label id="home-monthly-wrap">Giá từ / tháng (VNĐ)<input id="home-monthly-from" type="text" inputmode="numeric" autocomplete="off" /></label>
+        <label>Thời hạn tối thiểu<input id="home-min-stay" type="number" min="1" step="1" required /><small id="home-stay-unit">đêm</small></label>
+        <label>Số lượng căn cùng loại<input id="home-quantity" type="number" min="1" step="1" value="1" required /><small>Website chỉ hiển thị một căn; số này là số booking có thể nhận cùng lúc.</small></label>
+        <label>Số khách tối đa<input id="home-guests" type="number" min="1" required /></label>
+        <label>Số khách đã gồm trong giá<input id="home-base-guests" type="number" min="1" value="2" required /></label>
+        <label>Phụ thu / khách thêm / đêm (VNĐ)<input id="home-extra-guest-fee" type="number" min="0" step="10000" value="0" /></label>
+        <label>Số giường<input id="home-beds" type="number" min="0" required /></label>
+        <label>Số phòng tắm<input id="home-baths" type="number" min="0" required /></label>
+        <label>Hạng phòng<select id="home-room-category"><option value="">Không áp dụng</option><option>Standard</option><option>Deluxe</option><option>Suite</option><option>Studio</option><option>King</option><option>Queen</option></select></label>
+        <label>Loại căn<select id="home-unit-type"><option value="">Không áp dụng</option><option>Studio</option><option>1PN</option><option>2PN</option><option>3PN</option><option>Penthouse</option><option>Villa</option><option>Phòng khách sạn</option></select></label>
+        <label>Số phòng ngủ<input id="home-bedrooms" type="number" min="0" step="1" value="0" /></label>
+        <label>Diện tích (m²)<input id="home-area-sqm" type="number" min="0" step="1" value="0" /></label>
+        <label>Tầng & hướng nhìn<input id="home-floor-view" placeholder="VD: Tầng 12 · nhìn biển" /></label>
+        <label>Ban công<select id="home-balcony"><option value="no">Không có</option><option value="yes">Có ban công</option></select></label>
+        <label>Bếp<select id="home-kitchen"><option value="none">Không có</option><option value="shared">Bếp chung</option><option value="private">Bếp riêng</option></select></label>
+        <label class="checkbox"><input id="home-featured" type="checkbox" /> Căn hộ nổi bật</label>
+        <label>Trạng thái hiển thị<select id="home-status"><option value="published">Đang hiển thị</option><option value="hidden">Tạm ẩn</option><option value="soldout">Hết phòng</option></select></label>
+      </div>
+      <label>Mô tả<textarea id="home-description" rows="4" required></textarea></label>
+      <div class="bed-config"><strong>Cấu hình giường</strong><div class="form-grid"><label>King<input id="bed-king" type="number" min="0" value="0" /></label><label>Queen<input id="bed-queen" type="number" min="0" value="0" /></label><label>Giường đôi<input id="bed-double" type="number" min="0" value="0" /></label><label>Giường đơn<input id="bed-single" type="number" min="0" value="0" /></label><label>Giường tầng<input id="bed-bunk" type="number" min="0" value="0" /></label><label>Sofa bed<input id="bed-sofa" type="number" min="0" value="0" /></label></div><small>Tổng giường được tự tính từ cấu hình này khi bạn lưu.</small></div>
+      <fieldset class="check-group"><legend>Tiện nghi chuẩn</legend><div class="check-grid" id="amenity-checks"><label><input type="checkbox" value="wifi" /> Wi‑Fi tốc độ cao</label><label><input type="checkbox" value="kitchen" /> Bếp đầy đủ tiện nghi</label><label><input type="checkbox" value="washer" /> Máy giặt</label><label><input type="checkbox" value="workspace" /> Bàn làm việc</label><label><input type="checkbox" value="aircon" /> Điều hoà</label><label><input type="checkbox" value="tv" /> Smart TV</label><label><input type="checkbox" value="parking" /> Chỗ đỗ xe</label><label><input type="checkbox" value="pool" /> Hồ bơi</label></div><label>Tiện nghi khác<textarea id="home-amenities-other" rows="2" placeholder="Mỗi dòng một tiện nghi khác"></textarea></label></fieldset>
+      <fieldset class="check-group"><legend>Nội quy</legend><div class="check-grid" id="rule-checks"><label><input type="checkbox" value="Không hút thuốc trong nhà" /> Không hút thuốc</label><label><input type="checkbox" value="Không tổ chức tiệc hoặc sự kiện" /> Không tiệc/sự kiện</label><label><input type="checkbox" value="Thú cưng cần được trao đổi trước" /> Thú cưng cần trao đổi</label><label><input type="checkbox" value="Giữ yên tĩnh sau 22:00" /> Giữ yên tĩnh sau 22:00</label></div><div class="form-grid"><label>Nhận phòng<select id="home-checkin-time"><option>14:00</option><option>15:00</option><option>16:00</option></select></label><label>Trả phòng<select id="home-checkout-time"><option>11:00</option><option selected>12:00</option><option>13:00</option></select></label></div><label>Quy định khác<textarea id="home-house-rules-other" rows="2" placeholder="Mỗi dòng một quy định khác"></textarea></label></fieldset>
+      <fieldset class="check-group"><legend>Chính sách hủy</legend><label>Mức chính sách<select id="home-cancel-policy"><option value="flexible">Linh hoạt — miễn phí hủy trước 24 giờ</option><option value="moderate">Vừa phải — miễn phí hủy trước 5 ngày</option><option value="strict">Nghiêm ngặt — chỉ hoàn tiền theo thỏa thuận</option></select></label><label>Ghi chú thêm<textarea id="home-cancel-note" rows="2" placeholder="Điều kiện riêng của căn hộ (nếu có)"></textarea></label></fieldset>
+      <div class="form-grid"><label>Địa chỉ hiển thị<input id="home-address" placeholder="Số nhà, phường/xã, quận/huyện" /></label><label>Ghim bản đồ / từ khóa Google Maps<input id="home-map-query" placeholder="Tên địa điểm hoặc tọa độ" /></label></div>
+      <label>Ảnh căn hộ</label>
+      <div class="image-drop" id="image-drop" tabindex="0" role="button" aria-label="Kéo thả hoặc chọn ảnh căn hộ">
+        <strong>Kéo thả ảnh vào đây</strong><span>hoặc bấm để chọn ảnh · JPG, PNG, WebP · tối đa 4 MB/ảnh</span>
+        <input id="home-image-files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
+      </div>
+      <div class="image-preview" id="image-preview"></div>
+      <textarea id="home-images" hidden></textarea>
+      <p class="form-error" id="home-error"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" id="cancel-dialog">Hủy</button><button class="primary" id="save-home">Lưu thay đổi</button></div>
+    </form>
+  </dialog>
+  <script src="js/admin.js"></script>
+</body>
+</html>

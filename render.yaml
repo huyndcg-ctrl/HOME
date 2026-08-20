@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: ssens-homes-demo
+    runtime: node
+    buildCommand: npm run check
+    startCommand: npm start
+    healthCheckPath: /index.html
+    envVars:
+      - key: ADMIN_AUTH_DISABLED
+        value: "false"
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: OWNER_EMAIL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM
+        sync: false

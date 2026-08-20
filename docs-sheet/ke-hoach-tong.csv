@@ -1,0 +1,12 @@
+KẾ HOẠCH WEBSITE CHO THUÊ AIRBNB & CĂN HỘ DỊCH VỤ,
+Bản kế hoạch tổng thể & checklist theo dõi tiến độ — bổ sung chi tiết trực tiếp vào các sheet.,
+,
+Mục,Nội dung
+Mô hình,GĐ1: chủ nhà tự đăng & quản lý căn của mình → GĐ2: mở thành nền tảng đa chủ nhà (marketplace kiểu Airbnb)
+Cách làm,Code riêng (custom development)
+Nguyên tắc,"Làm MVP gọn trước, chạy được rồi mới mở rộng — tránh ôm đồm ngay từ đầu"
+3 nhóm người dùng,Khách thuê (Guest) / Chủ nhà (Host) / Quản trị (Admin)
+2 loại hình,"Airbnb ngắn ngày (đặt theo đêm) + Căn hộ dịch vụ dài ngày (đặt theo tháng, hợp đồng)"
+Các sheet,1) Tính năng  2) Công nghệ  3) Pháp lý  4) Lộ trình  5) Ước lượng
+Chú giải ưu tiên,P0 = bắt buộc cho MVP | P1 = quan trọng | P2 = mở rộng sau
+Cột Trạng thái,Chọn: Chưa làm / Đang làm / Xong / Tạm hoãn (có dropdown ở các sheet)

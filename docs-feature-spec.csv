@@ -1,0 +1,49 @@
+DANH SÁCH TÍNH NĂNG ĐẦY ĐỦ,,,,,,
+P0 = bắt buộc MVP | P1 = quan trọng | P2 = mở rộng. Cột Trạng thái & Ghi chú để bạn theo dõi.,,,,,,
+,,,,,,
+Vai trò,Nhóm,Tính năng,Ưu tiên,Trạng thái,Ghi chú,Đề xuất (bản như S.Sens)
+Khách thuê,Tìm kiếm & khám phá,Tìm theo vị trí (ô nhập địa điểm + gợi ý tự động),P0,Chưa làm,,RÚT GỌN — Chỉ cần lọc theo thành phố dạng tab như S.Sens; bỏ ô tìm autocomplete.
+Khách thuê,Tìm kiếm & khám phá,"Tìm theo bản đồ (map view, ghim vị trí, giá trên ghim)",P1,Chưa làm,,BỎ — S.Sens không có map search; danh mục ít căn không cần.
+Khách thuê,Tìm kiếm & khám phá,"Chọn ngày nhận/trả phòng, số khách, số phòng",P0,Chưa làm,,GIỮ — Chỉ là các trường trong form gửi yêu cầu — KHÔNG lọc theo lịch trống thật.
+Khách thuê,Tìm kiếm & khám phá,"Bộ lọc: khoảng giá, loại phòng, tiện nghi, số phòng ngủ, đánh giá, đặt ngay",P0/P1,Chưa làm,,RÚT GỌN — Bỏ bộ lọc phức tạp; chỉ lọc theo thành phố.
+Khách thuê,Tìm kiếm & khám phá,"Sắp xếp: theo giá (tăng/giảm), đánh giá, khoảng cách, mới nhất",P0,Chưa làm,,BỎ — Không cần sắp xếp khi danh mục nhỏ.
+Khách thuê,Tìm kiếm & khám phá,Gợi ý theo khu vực nổi bật / căn được đặt nhiều,P2,Chưa làm,,BỎ — Cần thuật toán/dữ liệu lớn — không cần cho showcase.
+Khách thuê,Trang chi tiết phòng,"Thư viện ảnh + video, xem toàn màn hình",P0,Chưa làm,,GIỮ — Gallery ảnh là điểm mạnh của S.Sens (video tùy chọn).
+Khách thuê,Trang chi tiết phòng,"Mô tả, tiện nghi, nội quy nhà, chính sách hủy",P0,Chưa làm,,GIỮ — Thông tin cơ bản của mỗi căn.
+Khách thuê,Trang chi tiết phòng,Lịch trống theo thời gian thực (real-time availability),P0,Chưa làm,,BỎ — Không đặt phòng online; lịch trống để Airbnb/Agoda lo.
+Khách thuê,Trang chi tiết phòng,Bản đồ vị trí + tiện ích xung quanh,P1,Chưa làm,,RÚT GỌN — Chỉ cần map tĩnh/nhúng như trang Contact của S.Sens.
+Khách thuê,Trang chi tiết phòng,Đánh giá & điểm số của khách trước,P1,Chưa làm,,BỎ — Không có hệ thống review; dùng testimonial tĩnh như S.Sens.
+Khách thuê,Đặt phòng & thanh toán,Tính giá minh bạch: giá/đêm × số đêm + phí dọn + phí dịch vụ + thuế − giảm giá,P0,Chưa làm,,BỎ — Không tính tiền online; chỉ hiển thị giá/đêm tham khảo.
+Khách thuê,Đặt phòng & thanh toán,Giảm giá theo số đêm/tháng (long-stay discount),P1,Chưa làm,,BỎ — Thuộc engine đặt phòng — không cần.
+Khách thuê,Đặt phòng & thanh toán,Đặt ngay (Instant Book) vs Gửi yêu cầu (Request to Book),P0/P1,Chưa làm,,BỎ — Không có đặt phòng online.
+Khách thuê,Đặt phòng & thanh toán,"Thanh toán online: VNPay, MoMo, ZaloPay, thẻ quốc tế, QR/chuyển khoản",P0,Chưa làm,,BỎ — ⚠️ CẮT LỚN NHẤT: không tích hợp thanh toán. Khách đặt & trả tiền trên Airbnb/Agoda.
+Khách thuê,Đặt phòng & thanh toán,Đặt cọc một phần / thanh toán toàn bộ,P1,Chưa làm,,BỎ — Không thu tiền online.
+Khách thuê,Đặt phòng & thanh toán,Mã giảm giá / voucher,P2,Chưa làm,,BỎ — Không có giỏ đặt phòng.
+Khách thuê,Quản lý cá nhân,"Đăng ký/đăng nhập: email, OTP điện thoại, Google",P0,Chưa làm,,BỎ — Không cần tài khoản khách; S.Sens không có đăng nhập.
+Khách thuê,Quản lý cá nhân,"Quản lý booking: xem, sửa, hủy; lịch sử; hóa đơn/biên nhận",P0,Chưa làm,,BỎ — Booking nằm ở Airbnb/Agoda — không quản lý trên web.
+Khách thuê,Quản lý cá nhân,Danh sách yêu thích (wishlist),P1,Chưa làm,,BỎ — Không cần tài khoản khách.
+Khách thuê,Quản lý cá nhân,"Hồ sơ cá nhân, đổi mật khẩu, xác minh danh tính",P1,Chưa làm,,BỎ — Không cần tài khoản khách.
+Khách thuê,Tương tác & tiện ích,Nhắn tin/chat với chủ nhà,P1,Chưa làm,,BỎ — Thay bằng nút WhatsApp/Zalo/gọi trực tiếp như S.Sens.
+Khách thuê,Tương tác & tiện ích,Đánh giá 2 chiều sau khi ở (khách ↔ chủ nhà),P1,Chưa làm,,BỎ — Không có hệ thống đánh giá.
+Khách thuê,Tương tác & tiện ích,"Thông báo: email, SMS, đẩy (push)",P1,Chưa làm,,RÚT GỌN — Chỉ cần email tự động xác nhận khi khách gửi form.
+Khách thuê,Tương tác & tiện ích,"Đa ngôn ngữ (VN/EN), đa tiền tệ",P2,Chưa làm,,ĐỂ SAU — Không bắt buộc; S.Sens chỉ dùng tiếng Anh. Thêm VN/EN sau nếu cần.
+Chủ nhà,Onboarding,"Đăng ký làm chủ nhà, xác minh (KYC: CCCD, SĐT, tài khoản ngân hàng)",P1 (GĐ2),Chưa làm,,BỎ — Marketplace (GĐ2) — bạn tự quản căn của mình.
+Chủ nhà,Onboarding,"Hồ sơ chủ nhà, thông tin liên hệ, hợp đồng cộng tác",P1 (GĐ2),Chưa làm,,BỎ — Marketplace (GĐ2).
+Chủ nhà,Quản lý listing,"Tạo/sửa/ẩn listing; tải ảnh; chọn tiện nghi, nội quy, loại phòng",P0,Chưa làm,,"RÚT GỌN — Chỉ cần CMS/nội bộ để BẠN tự thêm–sửa căn, không phải cổng đa chủ nhà."
+Chủ nhà,Quản lý listing,"Địa chỉ + ghim bản đồ; số khách tối đa, phòng ngủ/giường/WC",P0,Chưa làm,,GIỮ — Nhập địa chỉ + map tĩnh cho mỗi căn.
+Chủ nhà,Quản lý listing,Trạng thái duyệt (chờ duyệt/đã duyệt/từ chối),P1 (GĐ2),Chưa làm,,BỎ — Không có luồng duyệt (không đa chủ nhà).
+Chủ nhà,Lịch & giá,"Quản lý lịch, chặn ngày, đặt số đêm tối thiểu/tối đa",P0,Chưa làm,,BỎ — Lịch để Airbnb/Agoda lo; không đặt trên web.
+Chủ nhà,Lịch & giá,Đồng bộ iCal 2 chiều với Airbnb/Booking (chống double-booking),P1,Chưa làm,,BỎ — Không quản lý lịch trên web.
+Chủ nhà,Lịch & giá,"Giá theo mùa/cuối tuần/ngày lễ, phụ thu khách thêm, phí dọn",P1,Chưa làm,,BỎ — Giá động thuộc engine đặt phòng.
+Chủ nhà,Lịch & giá,"Giảm giá theo tuần/tháng, giá dài hạn cho căn hộ dịch vụ",P1,Chưa làm,,BỎ — Như trên.
+Chủ nhà,Vận hành,"Nhận/từ chối yêu cầu đặt phòng, xác nhận booking",P0,Chưa làm,,"RÚT GỌN — Chỉ nhận email yêu cầu từ form, liên hệ lại thủ công."
+Chủ nhà,Vận hành,"Báo cáo doanh thu, tỷ lệ lấp đầy, lịch dòng tiền",P1,Chưa làm,,BỎ — Không có dữ liệu booking để báo cáo.
+Chủ nhà,Vận hành,Đối soát & nhận payout (tiền về tài khoản),P1 (GĐ2),Chưa làm,,BỎ — Không thu tiền qua web (GĐ2).
+Admin,Dashboard,"Tổng quan: số booking, doanh thu, tỷ lệ lấp đầy, top listing",P0,Chưa làm,,BỎ — Không có booking/doanh thu trong hệ thống.
+Admin,Người dùng,"Quản lý khách & chủ nhà, khóa/mở tài khoản, phân quyền (RBAC)",P0/P1,Chưa làm,,BỎ — Không có tài khoản người dùng.
+Admin,Listing,"Duyệt/từ chối listing, chỉnh sửa, gắn nổi bật",P1 (GĐ2),Chưa làm,,BỎ — Không đa chủ nhà (GĐ2).
+Admin,Booking,"Xem toàn bộ đơn, can thiệp, hoàn/hủy, xử lý tranh chấp",P0,Chưa làm,,BỎ — Không quản lý booking trên web.
+Admin,Tài chính,"Cấu hình hoa hồng/phí, đối soát thanh toán, quản lý payout, xuất báo cáo",P1 (GĐ2),Chưa làm,,BỎ — Không có dòng tiền qua web (GĐ2).
+Admin,Nội dung/CMS,"Banner, trang landing khu vực, blog, cấu hình SEO",P2,Chưa làm,,"GIỮ ⭐ — Đây là thứ bạn THỰC SỰ cần: CMS sửa nội dung, ảnh, banner khuyến mãi, SEO."
+Admin,Hỗ trợ,"Ticket/khiếu nại, nhật ký hệ thống, gửi thông báo hàng loạt",P2,Chưa làm,,BỎ — Không cần hệ thống ticket; dùng email/WhatsApp.
+Admin,Cấu hình,"Danh mục tiện nghi, loại phòng, khu vực, thuế/phí, mẫu email/SMS",P1,Chưa làm,,"RÚT GỌN — Chỉ cần cấu hình nội dung cơ bản (danh mục tiện nghi, khu vực)."

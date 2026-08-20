@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S.Sens Homes — Căn hộ dịch vụ tại Việt Nam</title>
+  <meta name="description" content="Căn hộ dịch vụ và không gian lưu trú được tuyển chọn tại Việt Nam." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div data-header="index.html"></div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <img src="assets/img/1600585154340-be6161a56a0c.jpg" alt="Không gian sống được thiết kế tinh tế" />
+    </div>
+    <div class="wrap hero-inner">
+      <div class="eyebrow" data-content="hero-eyebrow">Lưu trú tinh tế · Việt Nam</div>
+      <h1 data-content="hero-title">Không gian để bạn thật sự thư giãn.</h1>
+      <p data-content="hero-text">Mỗi căn nhà được đội ngũ S.Sens chăm chút để bạn sống chậm lại, hít thở sâu hơn và cảm thấy như ở nhà tại bất cứ đâu.</p>
+      <div class="hero-actions">
+        <a href="#listing" class="btn btn-tan" id="home-hero-explore-button">Khám phá căn hộ</a>
+        <button class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" data-open-booking id="home-hero-booking-button">Gửi yêu cầu lưu trú</button>
+      </div>
+    </div>
+    <div class="scroll-cue">Cuộn<i></i></div>
+  </section>
+
+  <!-- Stats -->
+  <div class="wrap">
+    <div class="stats reveal">
+      <div class="stat" id="home-stat-1"><b>40+</b><span>Căn hộ tuyển chọn</span></div>
+      <div class="stat" id="home-stat-2"><b>5</b><span>Điểm đến</span></div>
+      <div class="stat" id="home-stat-3"><b>4.9</b><span>Điểm đánh giá trung bình</span></div>
+      <div class="stat" id="home-stat-4"><b>12k+</b><span>Lượt khách hài lòng</span></div>
+    </div>
+  </div>
+
+  <!-- Listing -->
+  <section class="section" id="listing">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <div class="eyebrow">Danh sách căn hộ</div>
+        <h2>Tìm căn nhà phù hợp với bạn</h2>
+        <p>Chọn lưu trú ngắn hạn hoặc căn hộ dịch vụ dài hạn. Mỗi căn hiển thị giá tham khảo; hãy liên hệ để nhận báo giá và tình trạng trống chính xác.</p>
+      </div>
+
+      <div class="stay-type-tabs reveal" id="stay-type-filters" aria-label="Loại hình thuê">
+        <button class="stay-type-tab active" data-stay-type="all"><b>Tất cả căn hộ</b><span>Khám phá mọi không gian của S.Sens</span></button>
+        <button class="stay-type-tab" data-stay-type="short"><b>Thuê ngắn hạn</b><span>Lưu trú dịch vụ theo đêm</span></button>
+        <button class="stay-type-tab" data-stay-type="long"><b>Thuê dài hạn</b><span>Căn hộ dịch vụ theo tháng</span></button>
+      </div>
+
+      <form class="short-stay-search reveal" id="short-stay-search" hidden>
+        <div><label>Nhận phòng<input type="date" name="checkin" required /></label></div>
+        <div><label>Trả phòng<input type="date" name="checkout" required /></label></div>
+        <div><label>Số khách<select name="guests"><option value="1">1 khách</option><option value="2" selected>2 khách</option><option value="3">3 khách</option><option value="4">4 khách</option><option value="5">5 khách</option><option value="6">6 khách</option><option value="7">7 khách</option><option value="8">8 khách</option><option value="9">9 khách</option><option value="10">10+ khách</option></select></label></div>
+        <button class="btn btn-primary" type="submit">Tìm căn ngắn hạn</button>
+        <p id="short-stay-search-note" aria-live="polite"></p>
+      </form>
+
+      <div class="listing-tools reveal">
+        <div class="filters" id="filters"></div>
+        <div class="advanced-filters">
+          <select id="price-filter" aria-label="Khoảng giá"><option value="all">Mọi mức giá</option><option value="low">Dưới 2,5 triệu/đêm</option><option value="mid">2,5–5 triệu/đêm</option><option value="high">Trên 5 triệu/đêm</option></select>
+          <select id="beds-filter" aria-label="Số phòng ngủ"><option value="all">Mọi số phòng ngủ</option><option value="1">1 phòng ngủ</option><option value="2">Từ 2 phòng ngủ</option><option value="3">Từ 3 phòng ngủ</option></select>
+          <select id="amenity-filter" aria-label="Tiện nghi"><option value="all">Mọi tiện nghi</option><option value="wifi">Wi-Fi tốc độ cao</option><option value="kitchen">Bếp đầy đủ tiện nghi</option><option value="washer">Máy giặt</option><option value="workspace">Bàn làm việc</option></select>
+          <select id="sort-filter" aria-label="Sắp xếp"><option value="featured">Sắp xếp: nổi bật</option><option value="price-asc">Giá: thấp đến cao</option><option value="price-desc">Giá: cao đến thấp</option><option value="rating">Đánh giá cao nhất</option></select>
+        </div>
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input type="text" id="listing-search" placeholder="Tìm căn hộ hoặc thành phố..." />
+        </div>
+      </div>
+
+      <div class="grid" id="listing-grid"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </section>
+
+  <!-- Why S.Sens -->
+  <section class="section" style="background:var(--cream-2)">
+    <div class="wrap">
+      <div class="split">
+        <div class="split-media reveal">
+          <img src="assets/img/1616486338812-3dadae4b4ace.jpg" alt="Chi tiết không gian nội thất" />
+        </div>
+        <div class="reveal">
+          <div class="eyebrow">Vì sao chọn S.Sens</div>
+          <h2>Sự ấm áp của một ngôi nhà, dịch vụ chỉn chu như khách sạn.</h2>
+          <p>Chúng tôi tự thiết kế, hoàn thiện và vận hành từng không gian để mọi chi tiết cho một kỳ lưu trú thoải mái luôn được chăm chút.</p>
+          <div class="value-list">
+            <div class="value-item">
+              <div class="vi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 10l9-7 9 7v9a2 2 0 01-2 2H5a2 2 0 01-2-2v-9z"/><path d="M9 21v-6h6v6"/></svg></div>
+              <div><h4 id="home-value-1-title">Thiết kế riêng</h4><p id="home-value-1-text">Nội thất ấm áp, tinh tế, đáng để bạn chụp lại và tận hưởng mỗi ngày.</p></div>
+            </div>
+            <div class="value-item">
+              <div class="vi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2l3 6 6 .8-4.5 4.3L18 20l-6-3.3L6 20l1.5-6.9L3 8.8 9 8z"/></svg></div>
+              <div><h4 id="home-value-2-title">Khách hàng đánh giá 4.9</h4><p id="home-value-2-text">Hàng nghìn lượt lưu trú yêu thích sự sạch sẽ và thoải mái tại S.Sens.</p></div>
+            </div>
+            <div class="value-item">
+              <div class="vi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+              <div><h4 id="home-value-3-title">Đội ngũ địa phương, 24/7</h4><p id="home-value-3-text">Luôn có người sẵn sàng hỗ trợ khi bạn cần.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <div class="eyebrow">Dễ dàng liên hệ</div>
+        <h2 id="home-steps-title">Ba bước cho kỳ lưu trú của bạn</h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal"><div class="num">01</div><h4 id="home-step-1-title">Chọn căn hộ</h4><p id="home-step-1-text">Khám phá các điểm đến và chọn không gian phù hợp với chuyến đi của bạn.</p></div>
+        <div class="step reveal"><div class="num">02</div><h4 id="home-step-2-title">Gửi yêu cầu</h4><p id="home-step-2-text">Cho chúng tôi biết ngày ở; đội ngũ phản hồi trong 15 phút, từ 8h đến 22h hằng ngày.</p></div>
+        <div class="step reveal"><div class="num">03</div><h4 id="home-step-3-title">Đến và thư giãn</h4><p id="home-step-3-text">Tự nhận phòng, không gian sạch sẽ và đội ngũ địa phương luôn sẵn sàng hỗ trợ.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section" style="background:var(--cream-2)">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <div class="eyebrow">Câu chuyện từ khách hàng</div>
+        <h2>Được khách hàng yêu mến</h2>
+      </div>
+      <div class="quotes" id="testimonials-list">
+        <div class="quote reveal">
+          <div class="stars">★★★★★</div>
+          <p>"The most beautiful apartment we stayed in across Vietnam. Every corner felt designed with care."</p>
+          <div class="who"><img src="https://i.pravatar.cc/88?img=32" alt="" /><div><b>Amelia R.</b><span>London, UK</span></div></div>
+        </div>
+        <div class="quote reveal">
+          <div class="stars">★★★★★</div>
+          <p>"Spotless, stylish and the team replied within minutes. We already booked our next S.Sens stay."</p>
+          <div class="who"><img src="https://i.pravatar.cc/88?img=12" alt="" /><div><b>Daniel K.</b><span>Singapore</span></div></div>
+        </div>
+        <div class="quote reveal">
+          <div class="stars">★★★★★</div>
+          <p>"Woke up to lake views every morning. It genuinely felt like a home, not a rental."</p>
+          <div class="who"><img src="https://i.pravatar.cc/88?img=45" alt="" /><div><b>Mai T.</b><span>Ha Noi, VN</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section faq-section" id="faq">
+    <div class="wrap faq-wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Hỏi đáp</div>
+        <h2>Những câu hỏi thường gặp</h2>
+        <p>Chưa tìm thấy câu trả lời? Hãy gửi yêu cầu, đội ngũ S.Sens sẽ hỗ trợ trong 15 phút từ 8h–22h.</p>
+      </div>
+      <div class="faq-list reveal" id="faq-list">
+        <details><summary>Tôi có thể đặt căn hộ ngay trên website không?</summary><p>Bạn chọn căn, ngày ở và gửi yêu cầu. Đội ngũ sẽ xác nhận tình trạng trống cùng báo giá cuối cùng trước khi chốt.</p></details>
+        <details><summary>Giá hiển thị đã gồm tất cả chi phí chưa?</summary><p>Bảng giá là mức tham khảo. Khi chọn ngày, hệ thống hiển thị tạm tính; các khoản phát sinh (nếu có) sẽ được thông báo rõ trước khi xác nhận.</p></details>
+        <details><summary>Nếu đi thêm người thì tính thế nào?</summary><p>Mỗi căn có số khách tối đa riêng. Nếu căn có phụ thu khách thêm, mức phụ thu sẽ tự hiển thị trong tổng tiền khi bạn tăng số khách.</p></details>
+        <details><summary>Tôi có thể thay đổi hoặc hủy yêu cầu không?</summary><p>Có. Hãy liên hệ đội ngũ S.Sens qua Zalo hoặc điện thoại, kèm mã yêu cầu để được hỗ trợ nhanh nhất.</p></details>
+        <details><summary>Thời gian nhận phòng và trả phòng là khi nào?</summary><p>Thời gian cụ thể được xác nhận theo từng căn. Bạn có thể ghi nhu cầu nhận/trả phòng trong phần ghi chú khi gửi yêu cầu.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <div class="eyebrow" style="color:#e7c99b">Sẵn sàng khi bạn cần</div>
+        <h2>Kỳ lưu trú tiếp theo đang chờ bạn.</h2>
+        <p>Hãy cho chúng tôi biết điểm đến; S.Sens sẽ giúp bạn tìm không gian phù hợp nhất.</p>
+        <button class="btn btn-tan" data-open-booking id="home-cta-button">Gửi yêu cầu lưu trú</button>
+      </div>
+    </div>
+  </section>
+
+  <div data-footer></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/booking-engine.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

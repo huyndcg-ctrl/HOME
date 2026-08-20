@@ -1,0 +1,7 @@
+.env
+data/bookings.json
+data/users.json
+data/email-verifications.json
+data/leads.json
+assets/uploads/
+_review_capstone_20260819/

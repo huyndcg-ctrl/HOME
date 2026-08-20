@@ -1,0 +1,22 @@
+BỘ CÔNG NGHỆ ĐỀ XUẤT (CODE RIÊNG),,,
+"Ưu tiên: dễ tuyển dev VN, một ngôn ngữ (TypeScript), SEO tốt, mobile-first, chi phí khởi đầu thấp, mở rộng được.",,,
+,,,
+Thành phần,Lựa chọn đề xuất,Lý do,Đề xuất (bản như S.Sens)
+Frontend,Next.js (React) + TypeScript + TailwindCSS,"SSR tốt cho SEO, nhanh, mobile-first, cộng đồng lớn",GIỮ — Next.js + Tailwind rất hợp cho site tĩnh/SSG chuẩn SEO.
+Backend,NestJS (Node.js) + TypeScript,"Cùng ngôn ngữ với frontend, cấu trúc rõ, dễ tuyển người",GIỮ — Cần backend thật cho đặt phòng/thanh toán/tài khoản (NestJS hoặc Next API).
+Cơ sở dữ liệu,PostgreSQL + Prisma ORM,"Quan hệ mạnh (booking/lịch/giá cần chặt chẽ), Prisma dễ dùng",GIỮ — Cần Postgres cho booking/lịch/giá/user — quan hệ chặt chẽ.
+Cache/hàng đợi,Redis,"Cache tìm kiếm, khóa chống double-booking, hàng đợi email/SMS",GIỮ — Redis cần để KHÓA chống double-booking khi có lịch real-time + hàng đợi email/SMS.
+Tìm kiếm,PostgreSQL full-text → Meilisearch/Elasticsearch (khi lớn),"Tiết kiệm ban đầu, nâng cấp khi dữ liệu nhiều",BỎ — Meilisearch/Elasticsearch thừa; lọc theo thành phố phía client là đủ.
+Bản đồ,Mapbox hoặc Google Maps API,"Ghim vị trí, tìm quanh khu vực",RÚT GỌN — Không cần Mapbox trả phí; nhúng Google Maps tĩnh như S.Sens.
+Lưu ảnh,Cloudinary hoặc AWS S3 + CDN,"Tối ưu & nén ảnh tự động, tải nhanh",GIỮ — Cloudinary hữu ích để nén & tải ảnh nhanh (điểm mạnh của S.Sens).
+Thanh toán,VNPay + MoMo + ZaloPay (VN); Stripe (quốc tế); QR/chuyển khoản,Phủ đủ cách trả tiền của khách VN & nước ngoài,GIỮ — Giữ vì có thanh toán online: VNPay/MoMo/ZaloPay + Stripe (khách quốc tế).
+Email / SMS-OTP,Resend/SendGrid (email); eSMS.vn/Twilio (SMS-OTP),Xác thực & thông báo,GIỮ — Cần cả SMS-OTP (đăng nhập điện thoại) + email xác nhận đặt phòng.
+Đăng nhập/bảo mật,"JWT + refresh token, OTP điện thoại, OAuth Google","An toàn, quen thuộc với người dùng VN","GIỮ — Cần JWT + refresh token, OTP điện thoại, OAuth Google."
+Chat thời gian thực,Socket.io hoặc Pusher,Nhắn tin khách ↔ chủ nhà,BỎ — Socket.io thừa; thay bằng link WhatsApp/Zalo.
+Trang quản trị (Admin),React-Admin / Refine (build riêng) hoặc Retool,NƠI BẠN VẬN HÀNH HỆ THỐNG,GIỮ — Cần admin thật để quản lý booking/lịch/giá (không chỉ CMS nội dung).
+Hạ tầng (Hosting),Đầu: Vercel + Railway/Render. Scale: VPS (DigitalOcean/AWS Lightsail/FPT/Viettel) + Docker,Bắt đầu rẻ & nhanh; chủ động khi lớn,GIỮ — Vercel là đủ và rẻ cho site tĩnh.
+Quy trình phát hành,GitHub + GitHub Actions (CI/CD),Tự động kiểm thử & triển khai,GIỮ — CI/CD nhẹ vẫn nên có (tùy chọn).
+Giám sát lỗi,Sentry + UptimeRobot,Theo dõi lỗi & thời gian hoạt động,ĐỂ SAU — Sentry/UptimeRobot tốt nhưng chưa cấp thiết cho site nhỏ.
+,,,
+"""Tôi quản lý ở đâu?""",,,
+"Nơi bạn ngồi quản lý hằng ngày chính là TRANG QUẢN TRỊ (Admin Panel) — website nội bộ, chỉ bạn/nhân viên đăng nhập. Từ đó xem booking, doanh thu, quản lý listing, giá, lịch. Trang này chạy trên server/hosting bạn thuê (Railway lúc đầu, rồi VPS khi lớn). Dữ liệu nằm trong CSDL PostgreSQL. Tóm lại: khách dùng website public, bạn dùng Admin Panel — cùng một hệ thống, khác quyền truy cập.",,,

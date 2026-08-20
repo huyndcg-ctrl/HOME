@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chuyến ở của tôi — S.Sens Homes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" /><link rel="stylesheet" href="css/account.css" />
+</head>
+<body>
+  <div data-header="account.html"></div>
+  <main class="account-page wrap">
+    <section class="account-hero"><p class="eyebrow">S.Sens Homes</p><h1>Chuyến ở của tôi</h1><p>Đăng nhập để quản lý các chuyến ở sắp tới, lịch sử đặt chỗ và biên nhận.</p></section>
+    <section id="auth-view" class="auth-layout" hidden>
+      <div class="auth-copy"><p class="eyebrow">Tài khoản S.Sens</p><h2>Lưu trú đơn giản hơn.</h2><p>Quản lý các chuyến ở, yêu cầu thay đổi và xem lại biên nhận bất cứ khi nào bạn cần.</p></div>
+      <div class="auth-card"><div class="auth-tabs"><button class="active" data-auth-tab="login">Đăng nhập</button><button data-auth-tab="register">Tạo tài khoản</button></div>
+        <form id="login-form"><label>Email <span class="required-mark">*</span><input name="email" type="email" required autocomplete="email" /></label><label>Mật khẩu <span class="required-mark">*</span><input name="password" type="password" required autocomplete="current-password" /></label><p class="auth-error"></p><button class="btn btn-primary btn-block">Đăng nhập</button></form>
+        <form id="register-form" hidden><label>Họ và tên <span class="required-mark">*</span><input name="name" required autocomplete="name" /></label><label>Email <span class="required-mark">*</span><input name="email" type="email" required autocomplete="email" /></label><label>Mật khẩu <span class="required-mark">*</span> <small>Tối thiểu 8 ký tự</small><input name="password" type="password" minlength="8" required autocomplete="new-password" /></label><p class="auth-error"></p><button class="btn btn-primary btn-block">Tạo tài khoản</button></form>
+        <form id="verify-form" hidden><p class="verify-copy">Chúng tôi đã gửi mã xác minh 6 chữ số đến <strong id="verify-email"></strong>.</p><label>Mã xác minh<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required /></label><p class="auth-error"></p><button class="btn btn-primary btn-block">Xác minh email</button><button type="button" class="resend-link" id="resend-code">Gửi lại mã mới</button></form>
+      </div>
+    </section>
+    <section id="account-view" hidden><div class="account-top"><div><p class="eyebrow">Tài khoản</p><h2 id="customer-name"></h2><p id="customer-email"></p></div><button class="btn btn-ghost" id="logout">Đăng xuất</button></div><div class="booking-list-head"><div><h2>Đặt chỗ của bạn</h2><p>Bạn có thể hủy đặt chỗ nếu kế hoạch thay đổi. Khi hủy, ngày ở sẽ được mở lại ngay.</p></div><a class="btn btn-tan" href="index.html#listing">Tìm căn hộ</a></div><div id="customer-bookings" class="customer-bookings"></div></section>
+  </main>
+  <div data-footer></div>
+  <script src="js/data.js"></script><script src="js/booking-engine.js"></script><script src="js/main.js"></script><script src="js/account.js"></script>
+</body>
+</html>

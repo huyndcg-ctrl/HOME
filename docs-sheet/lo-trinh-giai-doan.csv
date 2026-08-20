@@ -1,0 +1,19 @@
+LỘ TRÌNH THEO GIAI ĐOẠN (BẮT ĐẦU TỪ ĐÂU),,,,,
+Làm tuần tự từ GĐ0. Cột Trạng thái để bạn tick tiến độ từng khối.,,,,,
+,,,,,
+Giai đoạn,Khối chức năng / Việc,Bao gồm / Kết quả,Trạng thái,Ghi chú,Đề xuất (bản như S.Sens)
+GĐ0 – Chuẩn bị,Chốt phạm vi MVP,Danh sách tính năng P0 (dựa trên sheet Tính năng),Chưa làm,,"GIỮ — Vẫn cần nhưng nhẹ hơn: chốt phạm vi showcase, wireframe, nội dung/ảnh căn."
+GĐ0 – Chuẩn bị,Wireframe màn hình chính,"Trang chủ, Kết quả tìm, Chi tiết phòng, Đặt phòng, Admin",Chưa làm,,"GIỮ — Vẫn cần nhưng nhẹ hơn: chốt phạm vi showcase, wireframe, nội dung/ảnh căn."
+GĐ0 – Chuẩn bị,Thiết kế mô hình dữ liệu,"Sơ đồ CSDL (ERD): listing, lịch, giá, booking, user",Chưa làm,,RÚT GỌN — RÚT GỌN — ERD đơn giản: chỉ bảng listing (không cần booking/lịch/user).
+GĐ0 – Chuẩn bị,Khởi tạo dự án & Git repo,Khung dự án chạy được 'Hello world',Chưa làm,,"GIỮ — Vẫn cần nhưng nhẹ hơn: chốt phạm vi showcase, wireframe, nội dung/ảnh căn."
+GĐ0 – Chuẩn bị,Đăng ký tài khoản dịch vụ,"Khóa API: thanh toán, bản đồ, email/SMS, hosting",Chưa làm,,RÚT GỌN — RÚT GỌN — chỉ cần hosting + email + Cloudinary. Bỏ khóa thanh toán/SMS.
+GĐ1 – MVP tự đăng,Hiển thị & tìm kiếm,"Trang chủ, danh sách, tìm theo vị trí+ngày+khách, lọc & sort giá, chi tiết",Chưa làm,,"GIỮ — Đây là phần chính: trang chủ, danh sách, lọc theo thành phố, chi tiết."
+GĐ1 – MVP tự đăng,Lịch & giá,"Lịch trống real-time, tính giá theo đêm + phí, chặn ngày đã đặt",Chưa làm,,GIỮ — Lịch trống real-time + tính giá theo đêm + chặn ngày đã đặt.
+GĐ1 – MVP tự đăng,Đặt phòng & thanh toán,"Luồng đặt, tài khoản khách (email/OTP), VNPay/MoMo, email xác nhận",Chưa làm,,GIỮ — Luồng đặt + tài khoản (email/OTP) + VNPay/MoMo + email xác nhận.
+GĐ1 – MVP tự đăng,Admin cơ bản,"Đăng nhập admin, CRUD listing, quản lý booking, dashboard đơn giản",Chưa làm,,GIỮ — CRUD listing + quản lý booking + dashboard đơn giản.
+GĐ1 – MVP tự đăng,Chống double-booking,Khóa giao dịch khi đặt trùng khoảng ngày,Chưa làm,,GIỮ — Khóa giao dịch chống đặt trùng khoảng ngày.
+GĐ2 – Trải nghiệm khách,Tài khoản & tương tác,"Đăng nhập Google, đánh giá 2 chiều, chat, wishlist, coupon, thông báo, đa ngôn ngữ",Chưa làm,,ĐỂ SAU — Tài khoản/chat/đồng bộ lịch — chỉ làm khi thực sự cần.
+GĐ2 – Trải nghiệm khách,Đồng bộ lịch,iCal 2 chiều với Airbnb/Booking,Chưa làm,,ĐỂ SAU — Tài khoản/chat/đồng bộ lịch — chỉ làm khi thực sự cần.
+GĐ3 – Marketplace,Đa chủ nhà,"KYC chủ nhà, tự tạo/quản lý listing, duyệt listing",Chưa làm,,BỎ — Marketplace đa chủ nhà — ngoài phạm vi bản như S.Sens.
+GĐ3 – Marketplace,Tài chính nền tảng,"Cấu hình hoa hồng, tách tiền & payout, báo cáo theo chủ nhà, xử lý tranh chấp",Chưa làm,,BỎ — Marketplace đa chủ nhà — ngoài phạm vi bản như S.Sens.
+GĐ4 – Tối ưu,Tăng trưởng,"SEO & landing khu vực, dynamic pricing, app/PWA, analytics, referral/loyalty, tối ưu chi phí",Chưa làm,,ĐỂ SAU — SEO & landing khu vực nên giữ; phần dynamic pricing/app để sau.

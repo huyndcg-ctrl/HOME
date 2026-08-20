@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js && node --check js/admin.js && node --check js/main.js && node --check js/account.js"
+    "check": "node --check server.js && node --check js/admin.js && node --check js/main.js && node --check js/account.js && node --check scripts/qa-customer-flow.js",
+    "qa:customer": "node scripts/qa-customer-flow.js"
   }
 }

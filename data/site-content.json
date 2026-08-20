@@ -10,12 +10,12 @@
     "zalo": "84832091997"
   },
   "payment": {
-    "enabled": false,
-    "bankName": "",
-    "accountNumber": "",
-    "accountHolder": "",
-    "qrImage": "",
-    "instructions": "",
+    "enabled": true,
+    "bankName": "STAGING TEST — thay bằng ngân hàng thật",
+    "accountNumber": "0000000000",
+    "accountHolder": "S.Sens Homes STAGING",
+    "qrImage": "https://quickchart.io/qr?text=SSENS-STAGING-TRANSFER-ONLY&size=260",
+    "instructions": "Đây là môi trường STAGING, không chuyển tiền thật. Hãy tải một ảnh biên lai thử nghiệm để kiểm tra quy trình.",
     "transferPrefix": "SSH"
   },
   "seo": {

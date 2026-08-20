@@ -7,7 +7,9 @@ services:
     healthCheckPath: /index.html
     envVars:
       - key: ADMIN_AUTH_DISABLED
-        value: "false"
+        value: "true"
+      - key: ALLOW_UNVERIFIED_SIGNUP
+        value: "true"
       - key: ADMIN_PASSWORD
         sync: false
       - key: ASSET_FALLBACK_BASE

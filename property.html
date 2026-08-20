@@ -293,12 +293,15 @@
           payload.phone = f.phone.value.trim();
           payload.note = f.note ? f.note.value.trim() : "";
           payload.estimate = payload.total;
+          payload.propertyId = p.id;
+          payload.mode = "request";
 
           var btn = elForm.querySelector('button[type="submit"]');
           btn.textContent = "Đang chuẩn bị yêu cầu..."; btn.disabled = true;
-          fetch("/api/leads", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }).then(function (response) {
-            return response.json().then(function (data) { if (!response.ok) throw new Error(data.error || "Chưa thể gửi yêu cầu."); return data; });
+          fetch("/api/bookings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }).then(function (response) {
+            return response.json().then(function (data) { if (response.status === 401) { window.SSENS.toast && window.SSENS.toast("Vui lòng đăng nhập để đặt chỗ."); location.href = "account.html?next=" + encodeURIComponent(location.pathname + location.search); throw new Error("Đang chuyển tới trang đăng nhập."); } if (!response.ok) throw new Error(data.error || "Chưa thể tạo đặt chỗ."); return data; });
           }).then(function (result) {
+            result.lead = result.booking;
             return fetch("/api/payment-config").then(function (response) { return response.json(); }).then(function (data) { showPaymentStep(result, payload, data.payment || {}); });
           }).then(function () {
             window.SSENS.toast && window.SSENS.toast("Yêu cầu đã được ghi nhận.");

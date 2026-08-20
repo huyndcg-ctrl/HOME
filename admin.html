@@ -18,6 +18,7 @@
       <nav>
         <button class="nav-item active" data-view="leads">Yêu cầu mới</button>
         <button class="nav-item" data-view="bookings">Đặt chỗ</button>
+        <button class="nav-item" data-view="audit">Nhật ký hệ thống</button>
         <button class="nav-item" data-view="homes">Căn hộ & nội dung</button>
         <button class="nav-item" data-view="content">Nội dung website</button>
       </nav>
@@ -47,6 +48,10 @@
         <section class="panel" id="bookings-view" hidden>
           <div class="panel-head"><div><h2>Tất cả đặt chỗ</h2><p>Xác nhận, giữ chờ duyệt hoặc hủy một đặt chỗ.</p></div><input id="booking-search" type="search" placeholder="Tìm mã, khách hàng hoặc căn hộ" /></div>
           <div class="table-wrap"><table><thead><tr><th>Mã tham chiếu</th><th>Khách hàng</th><th>Căn hộ & kỳ ở</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead><tbody id="bookings-table"></tbody></table></div>
+        </section>
+        <section class="panel" id="audit-view" hidden>
+          <div class="panel-head"><div><h2>Nhật ký hệ thống</h2><p>Ghi nhận tạo đặt chỗ, gửi biên lai, xác nhận và hủy từ khách hoặc admin.</p></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Thời điểm</th><th>Sự kiện</th><th>Mã tham chiếu</th><th>Người thực hiện</th></tr></thead><tbody id="audit-table"></tbody></table></div>
         </section>
 
         <section class="panel" id="homes-view" hidden>

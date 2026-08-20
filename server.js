@@ -15,6 +15,7 @@ const USER_FILE = path.join(ROOT, "data", "users.json");
 const VERIFICATION_FILE = path.join(ROOT, "data", "email-verifications.json");
 const LEADS_FILE = path.join(ROOT, "data", "leads.json");
 const SITE_CONTENT_FILE = path.join(ROOT, "data", "site-content.json");
+const AUDIT_LOG_FILE = path.join(ROOT, "data", "audit-log.json");
 // Keep the public demo images available even when Render's runtime misses a
 // tracked static file. A custom mirror can still be supplied through .env.
 const ASSET_FALLBACK_BASE = String(
@@ -82,6 +83,18 @@ async function readSiteContent() {
 async function writeSiteContent(content) {
   await fsp.writeFile(SITE_CONTENT_FILE, JSON.stringify(content, null, 2) + "\n", "utf8");
 }
+async function readAuditLog() {
+  try { return JSON.parse(await fsp.readFile(AUDIT_LOG_FILE, "utf8")); }
+  catch { return []; }
+}
+async function writeAuditLog(entries) {
+  await fsp.writeFile(AUDIT_LOG_FILE, JSON.stringify(entries.slice(-1000), null, 2) + "\n", "utf8");
+}
+async function audit(event, entityType, entity, actor, detail = {}) {
+  const entries = await readAuditLog();
+  entries.push({ id: crypto.randomUUID(), at: new Date().toISOString(), event, entityType, entityId: entity.id, reference: entity.reference || "", actor, detail });
+  await writeAuditLog(entries);
+}
 async function saveUploadedImage(dataUrl, prefix = "upload") {
   const match = String(dataUrl || "").match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
   if (!match) { const error = new Error("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP"); error.statusCode = 400; throw error; }
@@ -116,7 +129,8 @@ function validDate(value) { return /^\d{4}-\d{2}-\d{2}$/.test(value || "") && !N
 function nightsBetween(checkin, checkout) { return Math.round((Date.parse(checkout + "T00:00:00Z") - Date.parse(checkin + "T00:00:00Z")) / 86400000); }
 function overlaps(a, b) { return a.checkin < b.checkout && b.checkin < a.checkout; }
 function nextDate(date) { const value = new Date(date + "T00:00:00Z"); value.setUTCDate(value.getUTCDate() + 1); return value.toISOString().slice(0, 10); }
-function bookingCountForDay(bookings, propertyId, day) { return bookings.filter((booking) => booking.propertyId === propertyId && ["pending", "confirmed"].includes(booking.status) && booking.checkin <= day && booking.checkout > day).length; }
+const RESERVING_BOOKING_STATUSES = ["pending", "payment_submitted", "payment_verified", "confirmed"];
+function bookingCountForDay(bookings, propertyId, day) { return bookings.filter((booking) => booking.propertyId === propertyId && RESERVING_BOOKING_STATUSES.includes(booking.status) && booking.checkin <= day && booking.checkout > day).length; }
 function hasCapacityForRange(bookings, property, range) { const quantity = Math.max(1, Math.floor(Number(property.quantity) || 1)); for (let day = range.checkin; day < range.checkout; day = nextDate(day)) if (bookingCountForDay(bookings, property.id, day) >= quantity) return false; return true; }
 function bookingRef() { return "SSH-" + crypto.randomBytes(4).toString("hex").toUpperCase(); }
 function leadRef() { return "YC-" + crypto.randomBytes(3).toString("hex").toUpperCase(); }
@@ -134,6 +148,7 @@ async function passwordMatches(password, stored) { const [salt, expected] = Stri
 async function currentUser(req) { const active = session(req); if (!active || active.role !== "customer") return null; const user = (await readUsers()).find((item) => item.id === active.userId); return user && user.emailVerified === true ? user : null; }
 // Local convenience switch. Keep this false on any public deployment.
 function adminAuthDisabled() { return String(process.env.ADMIN_AUTH_DISABLED || "").toLowerCase() === "true"; }
+function stagingSignupWithoutOtp() { return String(process.env.ALLOW_UNVERIFIED_SIGNUP || "").toLowerCase() === "true"; }
 function adminAuthorized(req) { return adminAuthDisabled() || session(req)?.role === "admin"; }
 function emailConfigured() { return !!(process.env.RESEND_API_KEY && process.env.RESEND_FROM); }
 function otpHash(code) { return crypto.createHash("sha256").update(String(code)).digest("hex"); }
@@ -186,9 +201,10 @@ function reserveBooking(input, property, mode, nights, config, customer) {
       error.statusCode = 409;
       throw error;
     }
-    const booking = { id: crypto.randomUUID(), reference: bookingRef(), customerId: customer.id, propertyId: property.id, propertyName: property.name, mode, status: mode === "instant" ? "confirmed" : "pending", checkin: input.checkin, checkout: input.checkout, nights, guests: Number(input.guests), total: quote(property, nights, config, input.guests), name: customer.name, email: customer.email, phone: String(input.phone).trim(), note: String(input.note || "").trim(), createdAt: new Date().toISOString() };
+    const booking = { id: crypto.randomUUID(), reference: bookingRef(), customerId: customer.id, propertyId: property.id, propertyName: property.name, mode, status: mode === "instant" ? "confirmed" : "pending", checkin: input.checkin, checkout: input.checkout, nights, guests: Number(input.guests), total: quote(property, nights, config, input.guests), name: customer.name, email: customer.email, phone: String(input.phone).trim(), note: String(input.note || "").trim(), paymentToken: crypto.randomBytes(24).toString("hex"), createdAt: new Date().toISOString() };
     bookings.push(booking);
     await writeBookings(bookings);
+    await audit("booking.created", "booking", booking, { role: "customer", userId: customer.id }, { mode });
     return booking;
   });
   bookingQueue = task.catch(() => undefined);
@@ -256,6 +272,21 @@ async function handleApi(req, res, url) {
       const input = await readBody(req);
       const leads = await readLeads();
       const lead = leads.find((item) => item.id === paymentProofMatch[1]);
+      if (!lead) {
+        const bookings = await readBookings();
+        const booking = bookings.find((item) => item.id === paymentProofMatch[1]);
+        const suppliedToken = Buffer.from(String(input.paymentToken || ""));
+        const storedToken = Buffer.from(String(booking?.paymentToken || ""));
+        if (!booking || !suppliedToken.length || suppliedToken.length !== storedToken.length || !crypto.timingSafeEqual(suppliedToken, storedToken)) return json(res, 404, { error: "Không tìm thấy yêu cầu thanh toán." });
+        if (booking.status === "cancelled") return json(res, 400, { error: "Đặt chỗ đã hủy, không thể gửi thanh toán." });
+        const proofUrl = await saveUploadedImage(input.proofDataUrl, "payment-proof");
+        booking.payment = { status: "proof_submitted", proofUrl, submittedAt: new Date().toISOString() };
+        booking.status = "payment_submitted";
+        booking.updatedAt = new Date().toISOString();
+        await writeBookings(bookings);
+        await audit("payment.proof_submitted", "booking", booking, { role: "customer", userId: booking.customerId }, { proofUrl });
+        return json(res, 201, { booking: { reference: booking.reference, paymentStatus: booking.payment.status } });
+      }
       const suppliedToken = Buffer.from(String(input.paymentToken || ""));
       const storedToken = Buffer.from(String(lead?.paymentToken || ""));
       if (!lead || !suppliedToken.length || suppliedToken.length !== storedToken.length || !crypto.timingSafeEqual(suppliedToken, storedToken)) return json(res, 404, { error: "Không tìm thấy yêu cầu thanh toán." });
@@ -274,11 +305,12 @@ async function handleApi(req, res, url) {
       const email = String(input.email || "").trim().toLowerCase();
       const password = String(input.password || "");
       if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8) return json(res, 400, { error: "Please provide a name, valid email, and password of at least 8 characters." });
-      if (!emailConfigured()) return json(res, 503, { error: "Email verification is not configured yet. Please try again shortly." });
       const users = await readUsers();
       if (users.some((user) => user.email === email)) return json(res, 409, { error: "An account already exists with this email." });
-      const user = { id: crypto.randomUUID(), role: "customer", name, email, passwordHash: await passwordHash(password), emailVerified: false, createdAt: new Date().toISOString() };
+      if (!emailConfigured() && !stagingSignupWithoutOtp()) return json(res, 503, { error: "Email verification is not configured yet. Please try again shortly." });
+      const user = { id: crypto.randomUUID(), role: "customer", name, email, passwordHash: await passwordHash(password), emailVerified: stagingSignupWithoutOtp(), createdAt: new Date().toISOString() };
       users.push(user); await writeUsers(users);
+      if (stagingSignupWithoutOtp()) return json(res, 201, { verificationRequired: false, user: { id: user.id, name: user.name, email: user.email, role: user.role } }, createSession(res, { role: "customer", userId: user.id }));
       await issueVerificationCode(email);
       return json(res, 201, { verificationRequired: true, email: user.email });
     } catch (error) { console.error(error); return json(res, error.statusCode || 500, { error: error.message || "We couldn't create your account right now." }); }
@@ -357,9 +389,42 @@ async function handleApi(req, res, url) {
       const booking = bookings.find((item) => item.id === customerBookingMatch[1] && item.customerId === user.id);
       if (!booking) { const error = new Error("Booking not found"); error.statusCode = 404; throw error; }
       if (booking.status === "cancelled") { const error = new Error("This booking is already cancelled."); error.statusCode = 400; throw error; }
-      booking.status = "cancelled"; booking.updatedAt = new Date().toISOString(); await writeBookings(bookings); return booking;
+      const priorStatus = booking.status;
+      booking.status = "cancelled";
+      booking.payment = { ...(booking.payment || {}), status: booking.payment?.status === "proof_submitted" ? "refund_review" : "cancelled" };
+      booking.updatedAt = new Date().toISOString();
+      await writeBookings(bookings);
+      await audit("booking.cancelled_by_customer", "booking", booking, { role: "customer", userId: user.id }, { priorStatus, paymentStatus: booking.payment.status });
+      return booking;
     }); bookingQueue = task.catch(() => undefined);
     try { return json(res, 200, { booking: await task }); } catch (error) { return json(res, error.statusCode || 500, { error: error.message || "Cancellation failed" }); }
+  }
+  const customerPaymentProofMatch = url.pathname.match(/^\/api\/me\/bookings\/([^/]+)\/payment-proof$/);
+  if (req.method === "POST" && customerPaymentProofMatch) {
+    try {
+      const user = await currentUser(req);
+      if (!user) return json(res, 401, { error: "Vui lòng đăng nhập để xác nhận thanh toán." });
+      const input = await readBody(req);
+      const task = bookingQueue.then(async () => {
+        const bookings = await readBookings();
+        const booking = bookings.find((item) => item.id === customerPaymentProofMatch[1] && item.customerId === user.id);
+        if (!booking) { const error = new Error("Không tìm thấy đặt chỗ."); error.statusCode = 404; throw error; }
+        if (booking.status === "cancelled") { const error = new Error("Đặt chỗ đã hủy, không thể gửi thanh toán."); error.statusCode = 400; throw error; }
+        const suppliedToken = Buffer.from(String(input.paymentToken || ""));
+        const storedToken = Buffer.from(String(booking.paymentToken || ""));
+        if (!suppliedToken.length || suppliedToken.length !== storedToken.length || !crypto.timingSafeEqual(suppliedToken, storedToken)) { const error = new Error("Phiên thanh toán không hợp lệ."); error.statusCode = 403; throw error; }
+        const proofUrl = await saveUploadedImage(input.proofDataUrl, "payment-proof");
+        booking.payment = { status: "proof_submitted", proofUrl, submittedAt: new Date().toISOString() };
+        booking.status = "payment_submitted";
+        booking.updatedAt = new Date().toISOString();
+        await writeBookings(bookings);
+        await audit("payment.proof_submitted", "booking", booking, { role: "customer", userId: user.id }, { proofUrl });
+        return booking;
+      });
+      bookingQueue = task.catch(() => undefined);
+      const booking = await task;
+      return json(res, 201, { booking: { id: booking.id, reference: booking.reference, status: booking.status, paymentStatus: booking.payment.status } });
+    } catch (error) { return json(res, error.statusCode || 500, { error: error.message || "Chưa thể tải ảnh biên lai." }); }
   }
   const receiptMatch = url.pathname.match(/^\/api\/me\/bookings\/([^/]+)\/receipt$/);
   if (req.method === "GET" && receiptMatch) {
@@ -416,6 +481,10 @@ async function handleApi(req, res, url) {
         const bookings = await readBookings();
         return json(res, 200, { bookings: bookings.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))) });
       }
+      if (req.method === "GET" && url.pathname === "/api/admin/audit-log") {
+        const entries = await readAuditLog();
+        return json(res, 200, { entries: entries.slice().reverse().slice(0, 200) });
+      }
       if (req.method === "GET" && url.pathname === "/api/admin/leads") {
         const leads = await readLeads();
         return json(res, 200, { leads: leads.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))) });
@@ -432,13 +501,17 @@ async function handleApi(req, res, url) {
       }
       if (req.method === "PATCH" && bookingMatch) {
         const input = await readBody(req);
-        if (!["pending", "confirmed", "cancelled"].includes(input.status)) return json(res, 400, { error: "Invalid booking status" });
+        if (!["pending", "payment_submitted", "payment_verified", "confirmed", "cancelled"].includes(input.status)) return json(res, 400, { error: "Invalid booking status" });
         const bookings = await readBookings();
         const booking = bookings.find((item) => item.id === bookingMatch[1]);
         if (!booking) return json(res, 404, { error: "Booking not found" });
+        const priorStatus = booking.status;
         booking.status = input.status;
+        if (input.status === "payment_verified") booking.payment = { ...(booking.payment || {}), status: "verified", verifiedAt: new Date().toISOString() };
+        if (input.status === "confirmed") booking.confirmedAt = new Date().toISOString();
         booking.updatedAt = new Date().toISOString();
         await writeBookings(bookings);
+        await audit("booking.status_changed_by_admin", "booking", booking, { role: "admin" }, { priorStatus, nextStatus: input.status });
         return json(res, 200, { booking });
       }
       if (req.method === "GET" && url.pathname === "/api/admin/properties") {
@@ -468,7 +541,7 @@ async function handleApi(req, res, url) {
   if (req.method === "GET" && url.pathname === "/api/availability") {
     const propertyId = url.searchParams.get("propertyId");
     const bookings = await readBookings();
-    const ranges = bookings.filter((b) => b.propertyId === propertyId && ["pending", "confirmed"].includes(b.status)).map((b) => ({ checkin: b.checkin, checkout: b.checkout, status: b.status }));
+    const ranges = bookings.filter((b) => b.propertyId === propertyId && RESERVING_BOOKING_STATUSES.includes(b.status)).map((b) => ({ checkin: b.checkin, checkout: b.checkout, status: b.status }));
     const property = (await mergedCatalogue()).properties.find((item) => item.id === propertyId);
     const quantity = Math.max(1, Math.floor(Number(property?.quantity) || 1));
     const dates = new Set(); ranges.forEach((range) => { for (let day = range.checkin; day < range.checkout; day = nextDate(day)) dates.add(day); });
@@ -490,7 +563,7 @@ async function handleApi(req, res, url) {
 
     const booking = await reserveBooking(input, property, mode, nights, catalog.config, customer);
     const emailStatus = await sendEmails(booking);
-    return json(res, 201, { booking: { reference: booking.reference, status: booking.status, mode: booking.mode, total: booking.total }, emailStatus });
+    return json(res, 201, { booking: { id: booking.id, reference: booking.reference, paymentToken: booking.paymentToken, status: booking.status, mode: booking.mode, total: booking.total }, emailStatus });
   } catch (error) {
     console.error(error);
     return json(res, error.statusCode || 500, { error: error.statusCode ? error.message : "We couldn't save your booking right now. Please try again." });

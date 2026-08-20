@@ -80,7 +80,7 @@ async function main() {
     await copyWorkspace(sandbox);
     child = spawn(process.execPath, ["server.js"], {
       cwd: sandbox,
-      env: { ...process.env, PORT: String(port), ADMIN_AUTH_DISABLED: "true", ALLOW_UNVERIFIED_SIGNUP: "true" },
+      env: { ...process.env, PORT: String(port), ADMIN_AUTH_DISABLED: "true", EMAIL_VERIFICATION_ENABLED: "false" },
       stdio: ["ignore", "pipe", "pipe"]
     });
     let serverOutput = "";
@@ -116,7 +116,7 @@ async function main() {
     try {
       const response = await customer.request("/api/auth/register", { method: "POST", body: JSON.stringify({ name: bookingInput.name, email: bookingInput.email, password: "QaTestPass2026!" }) });
       assert.equal(response.status, 201); assert.equal(response.body.verificationRequired, false);
-      pass(4, "Khách tạo tài khoản staging", "Tài khoản QA được tạo và tự đăng nhập trong chế độ staging không OTP.");
+      pass(4, "Khách tạo tài khoản không OTP", "Tài khoản QA được tạo và tự đăng nhập khi xác minh email đang tắt.");
     } catch (error) { fail(4, "Khách tạo tài khoản staging", error); }
 
     let booking;

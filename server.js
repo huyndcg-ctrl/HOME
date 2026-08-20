@@ -149,6 +149,9 @@ async function currentUser(req) { const active = session(req); if (!active || ac
 // Local convenience switch. Keep this false on any public deployment.
 function adminAuthDisabled() { return String(process.env.ADMIN_AUTH_DISABLED || "").toLowerCase() === "true"; }
 function stagingSignupWithoutOtp() { return String(process.env.ALLOW_UNVERIFIED_SIGNUP || "").toLowerCase() === "true"; }
+// OTP is intentionally off until Resend + a verified sending domain are ready.
+// Later set EMAIL_VERIFICATION_ENABLED=true to require it again.
+function emailVerificationRequired() { return String(process.env.EMAIL_VERIFICATION_ENABLED || "false").toLowerCase() === "true" && !stagingSignupWithoutOtp(); }
 function adminAuthorized(req) { return adminAuthDisabled() || session(req)?.role === "admin"; }
 function emailConfigured() { return !!(process.env.RESEND_API_KEY && process.env.RESEND_FROM); }
 function otpHash(code) { return crypto.createHash("sha256").update(String(code)).digest("hex"); }
@@ -307,10 +310,11 @@ async function handleApi(req, res, url) {
       if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8) return json(res, 400, { error: "Please provide a name, valid email, and password of at least 8 characters." });
       const users = await readUsers();
       if (users.some((user) => user.email === email)) return json(res, 409, { error: "An account already exists with this email." });
-      if (!emailConfigured() && !stagingSignupWithoutOtp()) return json(res, 503, { error: "Email verification is not configured yet. Please try again shortly." });
-      const user = { id: crypto.randomUUID(), role: "customer", name, email, passwordHash: await passwordHash(password), emailVerified: stagingSignupWithoutOtp(), createdAt: new Date().toISOString() };
+      const verificationRequired = emailVerificationRequired();
+      if (verificationRequired && !emailConfigured()) return json(res, 503, { error: "Email verification is not configured yet. Please try again shortly." });
+      const user = { id: crypto.randomUUID(), role: "customer", name, email, passwordHash: await passwordHash(password), emailVerified: !verificationRequired, createdAt: new Date().toISOString() };
       users.push(user); await writeUsers(users);
-      if (stagingSignupWithoutOtp()) return json(res, 201, { verificationRequired: false, user: { id: user.id, name: user.name, email: user.email, role: user.role } }, createSession(res, { role: "customer", userId: user.id }));
+      if (!verificationRequired) return json(res, 201, { verificationRequired: false, user: { id: user.id, name: user.name, email: user.email, role: user.role } }, createSession(res, { role: "customer", userId: user.id }));
       await issueVerificationCode(email);
       return json(res, 201, { verificationRequired: true, email: user.email });
     } catch (error) { console.error(error); return json(res, error.statusCode || 500, { error: error.message || "We couldn't create your account right now." }); }
@@ -347,9 +351,13 @@ async function handleApi(req, res, url) {
   if (req.method === "POST" && url.pathname === "/api/auth/login") {
     try {
       const input = await readBody(req);
-      const user = (await readUsers()).find((item) => item.email === String(input.email || "").trim().toLowerCase());
+      const users = await readUsers();
+      const user = users.find((item) => item.email === String(input.email || "").trim().toLowerCase());
       if (!user || !(await passwordMatches(String(input.password || ""), user.passwordHash))) return json(res, 401, { error: "Email or password is incorrect." });
-      if (user.emailVerified !== true) return json(res, 403, { error: "Please verify your email before signing in.", verificationRequired: true, email: user.email });
+      if (user.emailVerified !== true) {
+        if (emailVerificationRequired()) return json(res, 403, { error: "Please verify your email before signing in.", verificationRequired: true, email: user.email });
+        user.emailVerified = true; user.emailVerifiedAt = new Date().toISOString(); await writeUsers(users);
+      }
       return json(res, 200, { user: { id: user.id, name: user.name, email: user.email, role: user.role } }, createSession(res, { role: "customer", userId: user.id }));
     } catch (error) { console.error(error); return json(res, 500, { error: "We couldn't sign you in right now." }); }
   }

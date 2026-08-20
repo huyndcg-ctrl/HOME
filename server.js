@@ -15,7 +15,11 @@ const USER_FILE = path.join(ROOT, "data", "users.json");
 const VERIFICATION_FILE = path.join(ROOT, "data", "email-verifications.json");
 const LEADS_FILE = path.join(ROOT, "data", "leads.json");
 const SITE_CONTENT_FILE = path.join(ROOT, "data", "site-content.json");
-const ASSET_FALLBACK_BASE = String(process.env.ASSET_FALLBACK_BASE || "").replace(/\/$/, "");
+// Keep the public demo images available even when Render's runtime misses a
+// tracked static file. A custom mirror can still be supplied through .env.
+const ASSET_FALLBACK_BASE = String(
+  process.env.ASSET_FALLBACK_BASE || "https://raw.githubusercontent.com/huyndcg-ctrl/HOME/main"
+).replace(/\/$/, "");
 const scrypt = promisify(crypto.scrypt);
 const sessions = new Map();
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".svg": "image/svg+xml", ".webp": "image/webp", ".ico": "image/x-icon" };

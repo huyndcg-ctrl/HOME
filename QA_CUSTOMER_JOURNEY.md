@@ -30,6 +30,7 @@ Chạy lệnh `npm run qa:customer` trên môi trường cô lập cùng mã ngu
 ## Kiểm tra public hiện tại
 
 - Các trang public và ảnh tải được, chi tiết căn hiển thị đủ hình/tiện nghi/quy định.
+- Trên UI public, chọn ngày 20/08/2026 → 21/08/2026 hiển thị đúng check-in/check-out, 1 đêm và tổng giá tham khảo 3.007.750 ₫.
 - Đăng ký trên URL public hiện trả **503** vì chưa cấu hình Resend và chưa bật chế độ staging không OTP.
 - Admin trên URL public vẫn yêu cầu mật khẩu; đây là an toàn hơn việc tắt mật khẩu cho site đang public.
 

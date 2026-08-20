@@ -15,6 +15,7 @@ const USER_FILE = path.join(ROOT, "data", "users.json");
 const VERIFICATION_FILE = path.join(ROOT, "data", "email-verifications.json");
 const LEADS_FILE = path.join(ROOT, "data", "leads.json");
 const SITE_CONTENT_FILE = path.join(ROOT, "data", "site-content.json");
+const ASSET_FALLBACK_BASE = String(process.env.ASSET_FALLBACK_BASE || "").replace(/\/$/, "");
 const scrypt = promisify(crypto.scrypt);
 const sessions = new Map();
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".svg": "image/svg+xml", ".webp": "image/webp", ".ico": "image/x-icon" };
@@ -499,7 +500,15 @@ async function serveStatic(req, res, url) {
       "Cache-Control": "no-store"
     });
     fs.createReadStream(filePath).pipe(res);
-  } catch { res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" }); res.end("Not found"); }
+  } catch {
+    // Render's demo filesystem can omit static image assets at runtime. Keep the
+    // public demo resilient by serving the tracked repository copy as a fallback.
+    if (ASSET_FALLBACK_BASE && relativePath.startsWith("assets/img/")) {
+      res.writeHead(302, { Location: ASSET_FALLBACK_BASE + "/" + relativePath });
+      return res.end();
+    }
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" }); res.end("Not found");
+  }
 }
 
 loadEnv();

@@ -9,6 +9,15 @@
     "phone": "(+84) 83 209 1997",
     "zalo": "84832091997"
   },
+  "payment": {
+    "enabled": false,
+    "bankName": "",
+    "accountNumber": "",
+    "accountHolder": "",
+    "qrImage": "",
+    "instructions": "",
+    "transferPrefix": "SSH"
+  },
   "seo": {
     "homeTitle": "S.Sens Homes — Căn hộ dịch vụ tại Việt Nam",
     "homeDescription": "Căn hộ dịch vụ và không gian lưu trú được tuyển chọn tại Việt Nam.",

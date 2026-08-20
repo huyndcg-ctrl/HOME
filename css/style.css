@@ -436,6 +436,22 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
 .bk-done p { color: var(--ink-soft); font-size: 14px; }
 .bk-done-sum { margin-top: 16px; padding: 14px; background: var(--cream); border-radius: 12px; font-size: 14px; display: grid; gap: 4px; }
 .bk-done-sum b { font-size: 20px; }
+.payment-step { text-align: center; padding: 4px 0; }
+.payment-step > h3 { font-family: var(--serif); font-size: 28px; color: var(--forest); margin: 4px 0 8px; }
+.payment-step > p { color: var(--ink-soft); font-size: 14px; line-height: 1.55; }
+.payment-qr { display: block; width: min(100%, 250px); aspect-ratio: 1; object-fit: contain; margin: 18px auto; border: 1px solid var(--line); border-radius: 14px; background: #fff; padding: 8px; }
+.payment-bank { text-align: left; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.payment-bank div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.payment-bank div:last-child { border-bottom: 0; }
+.payment-bank span { color: var(--muted); }
+.payment-bank b { text-align: right; font-family: var(--numeric); font-variant-numeric: tabular-nums; color: var(--forest); }
+.payment-note { margin: 14px 0; text-align: left; }
+.payment-proof-form { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); text-align: left; }
+.payment-proof-form label { display: grid; gap: 7px; color: var(--ink); font-size: 13px; font-weight: 700; }
+.payment-proof-form em { color: var(--danger); font-style: normal; }
+.payment-proof-form input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 9px; background: #fff; }
+.payment-proof-form small, .payment-file-name { color: var(--muted); font-size: 12px; margin: 6px 0 12px; }
+.payment-error { min-height: 18px; margin: 9px 0 0; color: var(--danger); font-size: 12px; }
 
 /* ---------- FAQ & privacy consent ---------- */
 .faq-section { background: var(--cream-2); }

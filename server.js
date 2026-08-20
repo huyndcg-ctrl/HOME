@@ -82,6 +82,18 @@ async function readSiteContent() {
 async function writeSiteContent(content) {
   await fsp.writeFile(SITE_CONTENT_FILE, JSON.stringify(content, null, 2) + "\n", "utf8");
 }
+async function saveUploadedImage(dataUrl, prefix = "upload") {
+  const match = String(dataUrl || "").match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
+  if (!match) { const error = new Error("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP"); error.statusCode = 400; throw error; }
+  const bytes = Buffer.from(match[2], "base64");
+  if (!bytes.length || bytes.length > 4 * 1024 * 1024) { const error = new Error("Mỗi ảnh tối đa 4 MB"); error.statusCode = 400; throw error; }
+  const extension = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" }[match[1]];
+  const folder = path.join(ROOT, "assets", "uploads");
+  await fsp.mkdir(folder, { recursive: true });
+  const filename = `${prefix}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}.${extension}`;
+  await fsp.writeFile(path.join(folder, filename), bytes);
+  return "assets/uploads/" + filename;
+}
 async function mergedCatalogue() {
   const base = catalogue();
   const overrides = await readOverrides();
@@ -197,6 +209,10 @@ async function sendEmails(booking) {
 
 async function handleApi(req, res, url) {
   if (req.method === "GET" && url.pathname === "/api/content") return json(res, 200, { content: await readSiteContent() });
+  if (req.method === "GET" && url.pathname === "/api/payment-config") {
+    const payment = (await readSiteContent()).payment || {};
+    return json(res, 200, { payment: { enabled: payment.enabled === true, bankName: String(payment.bankName || ""), accountNumber: String(payment.accountNumber || ""), accountHolder: String(payment.accountHolder || ""), qrImage: String(payment.qrImage || ""), instructions: String(payment.instructions || ""), transferPrefix: String(payment.transferPrefix || "SSH") } });
+  }
   if (req.method === "POST" && url.pathname === "/api/leads") {
     try {
       if (req.method === "GET" && url.pathname === "/api/admin/content") return json(res, 200, { content: await readSiteContent() });
@@ -229,9 +245,27 @@ async function handleApi(req, res, url) {
       const leads = await readLeads();
       const now = new Date().toISOString();
       const lead = { id: crypto.randomUUID(), reference: leadRef(), status: "new", channel: String(input.channel || "website"), name, email, phone, property: String(input.property || "Yêu cầu chung").slice(0, 180), stayType: String(input.stayType || "short"), checkin, checkout, nights, guests: Math.max(1, Number(input.guests) || 1), estimate: String(input.estimate || ""), note: String(input.note || "").trim().slice(0, 2000), createdAt: now, updatedAt: now };
+      lead.paymentToken = crypto.randomBytes(24).toString("hex");
       leads.push(lead); await writeLeads(leads);
-      return json(res, 201, { lead: { reference: lead.reference, status: lead.status, responsePromise: "Phản hồi trong 15 phút (8h–22h)" } });
+      return json(res, 201, { lead: { id: lead.id, reference: lead.reference, paymentToken: lead.paymentToken, status: lead.status, responsePromise: "Phản hồi trong 15 phút (8h–22h)" } });
     } catch (error) { console.error(error); return json(res, 500, { error: "Chưa thể ghi nhận yêu cầu. Vui lòng thử lại hoặc gọi trực tiếp cho chúng tôi." }); }
+  }
+  const paymentProofMatch = url.pathname.match(/^\/api\/leads\/([^/]+)\/payment-proof$/);
+  if (req.method === "POST" && paymentProofMatch) {
+    try {
+      const input = await readBody(req);
+      const leads = await readLeads();
+      const lead = leads.find((item) => item.id === paymentProofMatch[1]);
+      const suppliedToken = Buffer.from(String(input.paymentToken || ""));
+      const storedToken = Buffer.from(String(lead?.paymentToken || ""));
+      if (!lead || !suppliedToken.length || suppliedToken.length !== storedToken.length || !crypto.timingSafeEqual(suppliedToken, storedToken)) return json(res, 404, { error: "Không tìm thấy yêu cầu thanh toán." });
+      const proofUrl = await saveUploadedImage(input.proofDataUrl, "payment-proof");
+      lead.payment = { status: "proof_submitted", proofUrl, submittedAt: new Date().toISOString() };
+      lead.status = "payment_submitted";
+      lead.updatedAt = new Date().toISOString();
+      await writeLeads(leads);
+      return json(res, 201, { lead: { reference: lead.reference, paymentStatus: lead.payment.status } });
+    } catch (error) { return json(res, error.statusCode || 500, { error: error.message || "Chưa thể tải ảnh biên lai." }); }
   }
   if (req.method === "POST" && url.pathname === "/api/auth/register") {
     try {
@@ -347,6 +381,15 @@ async function handleApi(req, res, url) {
         ["eyebrow", "title", "text"].forEach(key => { if (typeof input.hero?.[key] === "string") clean.hero[key] = input.hero[key].trim().slice(0, 1000); });
         ["email", "phone", "zalo"].forEach(key => { if (typeof input.contact?.[key] === "string") clean.contact[key] = input.contact[key].trim().slice(0, 160); });
         ["homeTitle", "homeDescription", "homeImage"].forEach(key => { if (typeof input.seo?.[key] === "string") clean.seo[key] = input.seo[key].trim().slice(0, 1000); });
+        if (input.payment && typeof input.payment === "object") clean.payment = {
+          enabled: input.payment.enabled === true,
+          bankName: String(input.payment.bankName || "").trim().slice(0, 120),
+          accountNumber: String(input.payment.accountNumber || "").replace(/\s/g, "").slice(0, 40),
+          accountHolder: String(input.payment.accountHolder || "").trim().slice(0, 160),
+          qrImage: String(input.payment.qrImage || "").trim().slice(0, 500),
+          instructions: String(input.payment.instructions || "").trim().slice(0, 1200),
+          transferPrefix: String(input.payment.transferPrefix || "SSH").trim().slice(0, 24)
+        };
         if (Array.isArray(input.faq)) clean.faq = input.faq.filter(item => item && typeof item.q === "string" && typeof item.a === "string").map(item => ({ q:item.q.trim().slice(0,300), a:item.a.trim().slice(0,1200) })).slice(0,12);
         let testimonials = input.testimonials;
         if (Array.isArray(testimonials) && testimonials.length === 1 && typeof testimonials[0]?.quote === "string" && testimonials[0].quote.trim().startsWith("[")) { try { testimonials = JSON.parse(testimonials[0].quote); } catch (_) {} }
@@ -379,7 +422,7 @@ async function handleApi(req, res, url) {
       }
       if (req.method === "PATCH" && leadMatch) {
         const input = await readBody(req);
-        const statuses = ["new", "contacted", "consulting", "held", "won", "lost"];
+        const statuses = ["new", "contacted", "consulting", "held", "payment_submitted", "payment_verified", "won", "lost"];
         if (!statuses.includes(input.status)) return json(res, 400, { error: "Trạng thái yêu cầu không hợp lệ" });
         const leads = await readLeads();
         const lead = leads.find((item) => item.id === leadMatch[1]);

@@ -128,7 +128,7 @@
                 '<button type="button" data-dec>−</button><b>2</b><button type="button" data-inc>+</button>' +
             '</span></div>' +
             '<div id="bk-quote"><div class="bk-hint">Chọn ngày bạn mong muốn; chúng tôi sẽ xác nhận tình trạng trống và giá cuối cùng. Phản hồi trong 15 phút (8h–22h).</div></div>' +
-            (p.status === "soldout" ? '<div class="bk-hint" style="text-align:center">Căn hộ hiện đã hết phòng. Vui lòng xem các căn khác hoặc liên hệ để được tư vấn.</div>' : '<button class="btn btn-primary btn-block" id="bk-request">Liên hệ về căn hộ này</button>') +
+            (p.status === "soldout" ? '<div class="bk-hint" style="text-align:center">Căn hộ hiện đã hết phòng. Vui lòng xem các căn khác hoặc liên hệ để được tư vấn.</div>' : '<button class="btn btn-primary btn-block" id="bk-request">Đặt chỗ & thanh toán</button>') +
             '<a class="btn btn-zalo btn-block" id="bk-zalo" href="https://zalo.me/84832091997" target="_blank" rel="noopener">Nhắn Zalo</a>' +
             '<a class="btn btn-ghost btn-block" href="tel:+84832091997">Gọi ngay (+84) 83 209 1997</a>' +
             '<form id="bk-form" class="bk-form" novalidate>' +
@@ -249,6 +249,26 @@
           elReq.style.display = "";
         });
 
+        function safe(value) { return String(value || "").replace(/[&<>"']/g, function (char) { return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[char]; }); }
+        function readImage(file) { return new Promise(function (resolve, reject) { var reader = new FileReader(); reader.onload = function () { resolve(reader.result); }; reader.onerror = reject; reader.readAsDataURL(file); }); }
+        function showStandardSuccess(result, payload) {
+          var aside = document.querySelector(".detail-book .form-card");
+          aside.innerHTML = '<div class="bk-done"><div class="bk-done-ico">✓</div><h3>Đã nhận yêu cầu của bạn</h3><p>' + safe(result.lead.responsePromise) + '. Đội ngũ S.Sens sẽ liên hệ để xác nhận tình trạng căn và báo giá cuối cùng.</p><div class="bk-done-sum"><div><span>' + safe(payload.checkin) + ' → ' + safe(payload.checkout) + '</span></div><div><span>' + safe(payload.nights) + ' đêm · ' + safe(payload.guests) + ' khách</span></div><div><b>Mã yêu cầu: ' + safe(result.lead.reference) + '</b></div></div><a class="btn btn-ghost btn-block" href="index.html#listing" style="margin-top:16px">Xem thêm căn hộ</a></div>';
+        }
+        function showPaymentStep(result, payload, payment) {
+          if (!payment.enabled) return showStandardSuccess(result, payload);
+          var aside = document.querySelector(".detail-book .form-card");
+          if (!payment.bankName || !payment.accountNumber || !payment.accountHolder || !payment.qrImage) {
+            aside.innerHTML = '<div class="bk-done"><div class="bk-done-ico">!</div><h3>Đang chờ thông tin thanh toán</h3><p>Yêu cầu <b>' + safe(result.lead.reference) + '</b> đã được ghi nhận. Đội ngũ S.Sens sẽ liên hệ hướng dẫn chuyển khoản.</p></div>';
+            return;
+          }
+          var transferContent = safe((payment.transferPrefix || "SSH") + " " + result.lead.reference);
+          aside.innerHTML = '<div class="payment-step"><div class="bk-done-ico">₫</div><p class="eyebrow">Thanh toán chuyển khoản</p><h3>Quét QR để thanh toán</h3><p>Vui lòng chuyển khoản theo thông tin bên dưới. Nội dung chuyển khoản: <strong>' + transferContent + '</strong>.</p><img class="payment-qr" src="' + safe(payment.qrImage) + '" alt="Mã QR chuyển khoản ' + safe(payment.bankName) + '"><div class="payment-bank"><div><span>Ngân hàng</span><b>' + safe(payment.bankName) + '</b></div><div><span>Số tài khoản</span><b>' + safe(payment.accountNumber) + '</b></div><div><span>Chủ tài khoản</span><b>' + safe(payment.accountHolder) + '</b></div><div><span>Mã yêu cầu</span><b>' + safe(result.lead.reference) + '</b></div></div><p class="payment-note">' + safe(payment.instructions || "Sau khi chuyển khoản, vui lòng tải ảnh biên lai để S.Sens kiểm tra.") + '</p><form id="payment-proof-form" class="payment-proof-form"><label>Ảnh biên lai chuyển khoản <em>*</em><input id="payment-proof-file" type="file" accept="image/jpeg,image/png,image/webp" required><small>JPG, PNG hoặc WebP · tối đa 4 MB</small></label><p class="payment-file-name" id="payment-file-name">Chưa chọn ảnh biên lai.</p><button class="btn btn-primary btn-block" type="submit" disabled>Tôi đã chuyển khoản — gửi xác nhận</button><p class="payment-error" id="payment-proof-error"></p></form></div>';
+          var proofForm = document.getElementById("payment-proof-form"); var proofFile = document.getElementById("payment-proof-file"); var proofButton = proofForm.querySelector("button");
+          proofFile.addEventListener("change", function () { var file = proofFile.files && proofFile.files[0]; var valid = file && /^image\/(jpeg|png|webp)$/.test(file.type) && file.size <= 4 * 1024 * 1024; document.getElementById("payment-file-name").textContent = valid ? "Đã chọn: " + file.name : "Vui lòng chọn ảnh JPG, PNG hoặc WebP dưới 4 MB."; proofButton.disabled = !valid; });
+          proofForm.addEventListener("submit", function (event) { event.preventDefault(); var file = proofFile.files && proofFile.files[0]; if (!file) return; proofButton.disabled = true; proofButton.textContent = "Đang gửi ảnh biên lai..."; readImage(file).then(function (proofDataUrl) { return fetch("/api/leads/" + encodeURIComponent(result.lead.id) + "/payment-proof", { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ paymentToken:result.lead.paymentToken, proofDataUrl:proofDataUrl }) }); }).then(function (response) { return response.json().then(function (data) { if (!response.ok) throw new Error(data.error || "Chưa thể gửi ảnh biên lai."); return data; }); }).then(function () { aside.innerHTML = '<div class="bk-done"><div class="bk-done-ico">✓</div><h3>Đã gửi bằng chứng thanh toán</h3><p>Cảm ơn bạn. S.Sens sẽ kiểm tra giao dịch và xác nhận đặt chỗ trong thời gian sớm nhất.</p><div class="bk-done-sum"><div><b>Mã yêu cầu: ' + safe(result.lead.reference) + '</b></div><div><span>Trạng thái: Chờ S.Sens xác nhận thanh toán</span></div></div></div>'; }).catch(function (error) { document.getElementById("payment-proof-error").textContent = error.message || "Chưa thể gửi ảnh biên lai."; proofButton.disabled = false; proofButton.textContent = "Tôi đã chuyển khoản — gửi xác nhận"; }); });
+        }
+
         elForm.addEventListener("submit", function (e) {
           e.preventDefault();
           var f = elForm.elements; // use .elements to avoid the form.name collision (name shadows the input)
@@ -279,18 +299,9 @@
           fetch("/api/leads", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }).then(function (response) {
             return response.json().then(function (data) { if (!response.ok) throw new Error(data.error || "Chưa thể gửi yêu cầu."); return data; });
           }).then(function (result) {
-            var aside = document.querySelector(".detail-book .form-card");
-            aside.innerHTML =
-              '<div class="bk-done"><div class="bk-done-ico">✓</div>' +
-              '<h3>Đã nhận yêu cầu của bạn</h3>' +
-              '<p>' + result.lead.responsePromise + '. Đội ngũ S.Sens sẽ liên hệ để xác nhận tình trạng căn và báo giá cuối cùng.</p>' +
-              '<div class="bk-done-sum">' +
-                '<div><span>' + payload.checkin + ' → ' + payload.checkout + '</span></div>' +
-                '<div><span>' + payload.nights + ' đêm · ' + payload.guests + ' khách</span></div>' +
-                '<div><b>Mã yêu cầu: ' + result.lead.reference + '</b></div>' +
-              '</div>' +
-              '<a class="btn btn-ghost btn-block" href="index.html#listing" style="margin-top:16px">Xem thêm căn hộ</a></div>';
-            window.SSENS.toast && window.SSENS.toast("Yêu cầu đã sẵn sàng để gửi!");
+            return fetch("/api/payment-config").then(function (response) { return response.json(); }).then(function (data) { showPaymentStep(result, payload, data.payment || {}); });
+          }).then(function () {
+            window.SSENS.toast && window.SSENS.toast("Yêu cầu đã được ghi nhận.");
           }).catch(function (error) {
             btn.textContent = "Gửi yêu cầu"; btn.disabled = false;
             window.SSENS.toast && window.SSENS.toast(error.message || "Chưa thể chuẩn bị yêu cầu. Vui lòng thử lại.");

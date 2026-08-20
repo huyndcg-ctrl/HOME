@@ -14,18 +14,18 @@ Chạy lệnh `npm run qa:customer` trên môi trường cô lập cùng mã ngu
 | 6 | Xác nhận chuyển khoản không có ảnh biên lai | PASS — chặn 400 |
 | 7 | Gửi ảnh biên lai hợp lệ | PASS — `payment_submitted` |
 | 8 | Tài khoản khác thử hủy đơn không thuộc mình | PASS — chặn 404 |
-| 9 | Khách mở “Đặt phòng của tôi” | PASS — chỉ thấy đơn của chính mình |
-| 10 | Khách hủy đơn sau khi gửi biên lai | PASS — `cancelled`, `refund_review`, lịch được mở, audit đủ |
+| 9 | Admin xác minh biên lai, khách mở “Đặt phòng của tôi” | PASS — `payment_verified` → `confirmed`, chỉ thấy đơn của chính mình |
+| 10 | Khách hủy đơn sau khi admin đã xác nhận | PASS — `cancelled`, `refund_review`, lịch được mở, audit đủ |
 
 ## Hành vi hiện tại
 
 1. Khách chọn căn, ngày và số khách; nếu chưa đăng nhập sẽ được chuyển sang trang tài khoản.
 2. Sau khi tạo booking, màn hình hiển thị QR, ngân hàng, số tài khoản, chủ tài khoản và mã chuyển khoản.
 3. Nút “Tôi đã chuyển khoản — gửi xác nhận” chỉ bật sau khi chọn ảnh JPG/PNG/WebP tối đa 4 MB. Server cũng chặn nếu không có ảnh.
-4. Khi gửi ảnh, trạng thái booking là `payment_submitted`. Admin xem chứng từ và xác nhận thủ công.
+4. Khi gửi ảnh, trạng thái booking là `payment_submitted`. Admin xem chứng từ, chuyển sang `payment_verified`, sau đó `confirmed`.
 5. Mỗi khách chỉ thấy booking của chính mình ở “Chuyến ở của tôi”.
-6. Khách bấm hủy: booking là `cancelled`; nếu đã gửi ảnh thì thanh toán là `refund_review`, nếu chưa gửi ảnh thì là `cancelled`. Lịch trống lại ngay.
-7. Audit log lưu `booking.created`, `payment.proof_submitted`, `booking.cancelled_by_customer`, kèm thời gian, người thao tác và trạng thái liên quan.
+6. Khách bấm hủy: booking là `cancelled`; nếu đã gửi ảnh **hoặc admin đã xác minh thanh toán** thì thanh toán là `refund_review`, nếu chưa gửi ảnh thì là `cancelled`. Lịch trống lại ngay.
+7. Audit log lưu `booking.created`, `payment.proof_submitted`, các lần `booking.status_changed_by_admin`, `booking.cancelled_by_customer`, kèm thời gian, người thao tác và trạng thái liên quan.
 
 ## Kiểm tra public hiện tại
 

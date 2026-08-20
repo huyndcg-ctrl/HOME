@@ -391,7 +391,7 @@ async function handleApi(req, res, url) {
       if (booking.status === "cancelled") { const error = new Error("This booking is already cancelled."); error.statusCode = 400; throw error; }
       const priorStatus = booking.status;
       booking.status = "cancelled";
-      booking.payment = { ...(booking.payment || {}), status: booking.payment?.status === "proof_submitted" ? "refund_review" : "cancelled" };
+      booking.payment = { ...(booking.payment || {}), status: ["proof_submitted", "verified"].includes(booking.payment?.status) ? "refund_review" : "cancelled" };
       booking.updatedAt = new Date().toISOString();
       await writeBookings(bookings);
       await audit("booking.cancelled_by_customer", "booking", booking, { role: "customer", userId: user.id }, { priorStatus, paymentStatus: booking.payment.status });

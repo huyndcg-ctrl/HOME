@@ -90,6 +90,7 @@ async function main() {
     const guest = client(base);
     const customer = client(base);
     const outsider = client(base);
+    const admin = client(base);
 
     try {
       for (const page of ["/index.html", "/property.html?id=arena-seaview", "/account.html"]) {
@@ -147,11 +148,17 @@ async function main() {
     } catch (error) { fail(8, "Phân quyền giữa hai khách", error); }
 
     try {
+      const login = await admin.request("/api/auth/admin-login", { method: "POST", body: "{}" });
+      assert.equal(login.status, 200);
+      const verified = await admin.request(`/api/admin/bookings/${booking.id}`, { method: "PATCH", body: JSON.stringify({ status: "payment_verified" }) });
+      assert.equal(verified.status, 200); assert.equal(verified.body.booking.payment.status, "verified");
+      const confirmed = await admin.request(`/api/admin/bookings/${booking.id}`, { method: "PATCH", body: JSON.stringify({ status: "confirmed" }) });
+      assert.equal(confirmed.status, 200); assert.equal(confirmed.body.booking.status, "confirmed");
       const response = await customer.request("/api/me/bookings");
       const own = response.body.bookings.find((item) => item.id === booking.id);
-      assert.equal(response.status, 200); assert.equal(own.status, "payment_submitted"); assert.equal(own.payment.status, "proof_submitted");
-      pass(9, "Khách xem Đặt phòng của tôi", "Đơn của chính khách hiển thị kèm trạng thái đã gửi chứng từ.");
-    } catch (error) { fail(9, "Khách xem Đặt phòng của tôi", error); }
+      assert.equal(response.status, 200); assert.equal(own.status, "confirmed"); assert.equal(own.payment.status, "verified");
+      pass(9, "Admin xác minh, khách thấy đặt chỗ xác nhận", "Admin kiểm tra biên lai, chuyển payment_verified → confirmed; khách thấy trạng thái đã xác nhận.");
+    } catch (error) { fail(9, "Admin xác minh, khách thấy đặt chỗ xác nhận", error); }
 
     try {
       const cancelled = await customer.request(`/api/me/bookings/${booking.id}`, { method: "PATCH", body: "{}" });
@@ -160,8 +167,8 @@ async function main() {
       assert.equal(availability.body.unavailableDates.includes("2027-08-10"), false);
       const audit = await guest.request("/api/admin/audit-log");
       const events = audit.body.entries.filter((item) => item.entityId === booking.id).map((item) => item.event);
-      assert.deepEqual(events, ["booking.cancelled_by_customer", "payment.proof_submitted", "booking.created"]);
-      pass(10, "Khách hủy đơn và hệ thống đồng bộ", "Đơn cancelled, chứng từ chuyển refund_review, lịch được mở và audit log đủ 3 sự kiện.");
+      assert.deepEqual(events, ["booking.cancelled_by_customer", "booking.status_changed_by_admin", "booking.status_changed_by_admin", "payment.proof_submitted", "booking.created"]);
+      pass(10, "Khách hủy đơn và hệ thống đồng bộ", "Đơn confirmed chuyển cancelled, chứng từ chuyển refund_review, lịch được mở và audit log đủ 5 sự kiện.");
     } catch (error) { fail(10, "Khách hủy đơn và hệ thống đồng bộ", error); }
 
     const failed = results.filter((item) => item.result === "FAIL");
